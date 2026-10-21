@@ -1,0 +1,237 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080" font-family="'Segoe UI', 'IBM Plex Sans', Arial, sans-serif">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1F4E79"/>
+    </marker>
+    <marker id="arrO" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#B54708"/>
+    </marker>
+    <marker id="arrG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1E7A4C"/>
+    </marker>
+    <filter id="sh" x="-10%" y="-10%" width="120%" height="140%">
+      <feDropShadow dx="0" dy="3" stdDeviation="6" flood-color="#101828" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+
+  <!-- Fond -->
+  <rect width="1920" height="1080" fill="#F5F6F8"/>
+  <rect x="0" y="0" width="1920" height="8" fill="#1F4E79"/>
+
+  <!-- Titre -->
+  <text x="70" y="92" font-size="40" font-weight="700" fill="#1B2430">Workflow d’un dossier dans ETHAN LM</text>
+  <text x="70" y="132" font-size="21" fill="#5B6573">Du PO client à la clôture : chaque étape, ses responsables et ses contrôles</text>
+  <g transform="translate(1530,70)">
+    <rect width="320" height="56" rx="28" fill="#FFFFFF" stroke="#DDE1E6"/>
+    <rect x="8" y="8" width="40" height="40" rx="10" fill="#1F4E79"/>
+    <text x="28" y="36" font-size="22" font-weight="700" fill="#FFFFFF" text-anchor="middle">E</text>
+    <text x="62" y="27" font-size="17" font-weight="700" fill="#1B2430">ETHAN LM</text>
+    <text x="62" y="45" font-size="12" fill="#5B6573" letter-spacing="1.5">LOGISTICS MANAGEMENT</text>
+  </g>
+
+  <!-- Libellé du flux principal -->
+  <text x="70" y="200" font-size="15" font-weight="700" fill="#1F4E79" letter-spacing="2">FLUX PRINCIPAL</text>
+  <line x1="215" y1="195" x2="1850" y2="195" stroke="#DDE1E6" stroke-width="1.5"/>
+
+  <!-- Flèches du flux principal (entre les cartes) -->
+  <g stroke="#1F4E79" stroke-width="3" fill="none" marker-end="url(#arr)">
+    <line x1="292" y1="315" x2="326" y2="315"/>
+    <line x1="552" y1="315" x2="586" y2="315"/>
+    <line x1="812" y1="315" x2="846" y2="315"/>
+    <line x1="1072" y1="315" x2="1106" y2="315"/>
+    <line x1="1332" y1="315" x2="1366" y2="315"/>
+    <line x1="1592" y1="315" x2="1626" y2="315"/>
+  </g>
+
+  <!-- Cartes : x = 70 + (n-1) * 260, largeur 220 -->
+  <g font-size="15">
+    <!-- 1 -->
+    <g transform="translate(70,230)" filter="url(#sh)">
+      <rect width="220" height="170" rx="14" fill="#FFFFFF" stroke="#DDE1E6"/>
+      <rect width="220" height="6" rx="3" fill="#1F4E79"/>
+      <circle cx="34" cy="44" r="18" fill="#1F4E79"/><text x="34" y="50" font-size="17" font-weight="700" fill="#FFF" text-anchor="middle">1</text>
+      <text x="62" y="51" font-size="20" font-weight="700" fill="#1B2430">PO client</text>
+      <text x="20" y="92" fill="#5B6573">Réception de la</text>
+      <text x="20" y="112" fill="#5B6573">commande du client</text>
+      <rect x="20" y="132" width="180" height="24" rx="12" fill="#E8EEF4"/>
+      <text x="110" y="149" font-size="13" font-weight="600" fill="#1F4E79" text-anchor="middle">Commercial</text>
+    </g>
+    <!-- 2 -->
+    <g transform="translate(330,230)" filter="url(#sh)">
+      <rect width="220" height="170" rx="14" fill="#FFFFFF" stroke="#DDE1E6"/>
+      <rect width="220" height="6" rx="3" fill="#1F4E79"/>
+      <circle cx="34" cy="44" r="18" fill="#1F4E79"/><text x="34" y="50" font-size="17" font-weight="700" fill="#FFF" text-anchor="middle">2</text>
+      <text x="62" y="51" font-size="20" font-weight="700" fill="#1B2430">Sourcing</text>
+      <text x="20" y="92" fill="#5B6573">Devis fournisseurs,</text>
+      <text x="20" y="112" fill="#5B6573">choix de l’offre</text>
+      <rect x="20" y="132" width="180" height="24" rx="12" fill="#E8EEF4"/>
+      <text x="110" y="149" font-size="13" font-weight="600" fill="#1F4E79" text-anchor="middle">Acheteur</text>
+    </g>
+    <!-- 3 -->
+    <g transform="translate(590,230)" filter="url(#sh)">
+      <rect width="220" height="170" rx="14" fill="#FFFFFF" stroke="#DDE1E6"/>
+      <rect width="220" height="6" rx="3" fill="#1F4E79"/>
+      <circle cx="34" cy="44" r="18" fill="#1F4E79"/><text x="34" y="50" font-size="17" font-weight="700" fill="#FFF" text-anchor="middle">3</text>
+      <text x="62" y="51" font-size="20" font-weight="700" fill="#1B2430">PO fournisseur</text>
+      <text x="20" y="92" fill="#5B6573">Émission et envoi</text>
+      <text x="20" y="112" fill="#5B6573">au fournisseur</text>
+      <rect x="20" y="132" width="180" height="24" rx="12" fill="#E8EEF4"/>
+      <text x="110" y="149" font-size="13" font-weight="600" fill="#1F4E79" text-anchor="middle">Acheteur</text>
+    </g>
+    <!-- 4 -->
+    <g transform="translate(850,230)" filter="url(#sh)">
+      <rect width="220" height="170" rx="14" fill="#FFFFFF" stroke="#DDE1E6"/>
+      <rect width="220" height="6" rx="3" fill="#1F4E79"/>
+      <circle cx="34" cy="44" r="18" fill="#1F4E79"/><text x="34" y="50" font-size="17" font-weight="700" fill="#FFF" text-anchor="middle">4</text>
+      <text x="62" y="51" font-size="20" font-weight="700" fill="#1B2430">Expédition</text>
+      <text x="20" y="92" fill="#5B6573">Chargement, camion,</text>
+      <text x="20" y="112" fill="#5B6573">départ et transit</text>
+      <rect x="20" y="132" width="180" height="24" rx="12" fill="#E8EEF4"/>
+      <text x="110" y="149" font-size="13" font-weight="600" fill="#1F4E79" text-anchor="middle">Logistique · Transitaire</text>
+    </g>
+    <!-- 5 -->
+    <g transform="translate(1110,230)" filter="url(#sh)">
+      <rect width="220" height="170" rx="14" fill="#FFFFFF" stroke="#DDE1E6"/>
+      <rect width="220" height="6" rx="3" fill="#1F4E79"/>
+      <circle cx="34" cy="44" r="18" fill="#1F4E79"/><text x="34" y="50" font-size="17" font-weight="700" fill="#FFF" text-anchor="middle">5</text>
+      <text x="62" y="51" font-size="20" font-weight="700" fill="#1B2430">Réception</text>
+      <text x="20" y="92" fill="#5B6573">Livraison chez le client,</text>
+      <text x="20" y="112" fill="#5B6573">quantités reçues</text>
+      <rect x="20" y="132" width="180" height="24" rx="12" fill="#E8EEF4"/>
+      <text x="110" y="149" font-size="13" font-weight="600" fill="#1F4E79" text-anchor="middle">Magasin · Client</text>
+    </g>
+    <!-- 6 -->
+    <g transform="translate(1370,230)" filter="url(#sh)">
+      <rect width="220" height="170" rx="14" fill="#FFFFFF" stroke="#DDE1E6"/>
+      <rect width="220" height="6" rx="3" fill="#1F4E79"/>
+      <circle cx="34" cy="44" r="18" fill="#1F4E79"/><text x="34" y="50" font-size="17" font-weight="700" fill="#FFF" text-anchor="middle">6</text>
+      <text x="62" y="51" font-size="20" font-weight="700" fill="#1B2430">Facturation</text>
+      <text x="20" y="92" fill="#5B6573">Factures client et</text>
+      <text x="20" y="112" fill="#5B6573">fournisseur, paiements</text>
+      <rect x="20" y="132" width="180" height="24" rx="12" fill="#E8EEF4"/>
+      <text x="110" y="149" font-size="13" font-weight="600" fill="#1F4E79" text-anchor="middle">Finance</text>
+    </g>
+    <!-- 7 -->
+    <g transform="translate(1630,230)" filter="url(#sh)">
+      <rect width="220" height="170" rx="14" fill="#FFFFFF" stroke="#1E7A4C" stroke-width="1.5"/>
+      <rect width="220" height="6" rx="3" fill="#1E7A4C"/>
+      <circle cx="34" cy="44" r="18" fill="#1E7A4C"/><text x="34" y="50" font-size="17" font-weight="700" fill="#FFF" text-anchor="middle">7</text>
+      <text x="62" y="51" font-size="20" font-weight="700" fill="#1B2430">Clôture</text>
+      <text x="20" y="92" fill="#5B6573">Contrôles de fin,</text>
+      <text x="20" y="112" fill="#5B6573">dossier soldé et archivé</text>
+      <rect x="20" y="132" width="180" height="24" rx="12" fill="#E7F3EC"/>
+      <text x="110" y="149" font-size="13" font-weight="600" fill="#1E7A4C" text-anchor="middle">Responsable</text>
+    </g>
+  </g>
+
+  <!-- ===== Branche importation ===== -->
+  <text x="70" y="478" font-size="15" font-weight="700" fill="#B54708" letter-spacing="2">IMPORTATION</text>
+  <text x="70" y="500" font-size="14" fill="#5B6573">uniquement pour les</text>
+  <text x="70" y="518" font-size="14" fill="#5B6573">dossiers en mode import</text>
+  <rect x="300" y="455" width="930" height="215" rx="16" fill="#FFFFFF" fill-opacity="0.6" stroke="#B54708" stroke-dasharray="8 6" stroke-width="1.5"/>
+
+  <!-- PO fournisseur → Licence -->
+  <path d="M700,400 L700,430 L420,430 L420,492" stroke="#B54708" stroke-width="2.5" fill="none" stroke-dasharray="7 5" marker-end="url(#arrO)"/>
+  <!-- Licence → Inspection → Décision -->
+  <g stroke="#B54708" stroke-width="2.5" fill="none" marker-end="url(#arrO)">
+    <line x1="532" y1="555" x2="618" y2="555"/>
+    <line x1="842" y1="555" x2="928" y2="555"/>
+  </g>
+  <!-- AV → Expédition -->
+  <path d="M1040,492 L1040,445 L960,445 L960,406" stroke="#1E7A4C" stroke-width="2.5" fill="none" marker-end="url(#arrG)"/>
+  <rect x="1050" y="452" width="150" height="24" rx="12" fill="#E7F3EC"/>
+  <text x="1125" y="469" font-size="13" font-weight="600" fill="#1E7A4C" text-anchor="middle">AV → chargement</text>
+  <!-- ARA → régularisation -->
+  <path d="M1040,618 L1040,648 L730,648 L730,622" stroke="#B42318" stroke-width="2" fill="none" stroke-dasharray="6 5" marker-end="url(#arr)"/>
+  <text x="885" y="641" font-size="13" font-weight="600" fill="#B42318" text-anchor="middle">ARA → nouvelle inspection (régularisation)</text>
+
+  <g font-size="14">
+    <g transform="translate(316,495)" filter="url(#sh)">
+      <rect width="212" height="120" rx="12" fill="#FCEFE3" stroke="#F3C9A1"/>
+      <text x="16" y="32" font-size="18" font-weight="700" fill="#7A2E0E">Licence d’import</text>
+      <text x="16" y="60" fill="#5B6573">N° de validation + COD</text>
+      <text x="16" y="80" fill="#5B6573">FOB + fret + assurance</text>
+      <text x="16" y="100" fill="#5B6573">= CIF · lecture du PDF</text>
+    </g>
+    <g transform="translate(624,495)" filter="url(#sh)">
+      <rect width="212" height="120" rx="12" fill="#FCEFE3" stroke="#F3C9A1"/>
+      <text x="16" y="32" font-size="18" font-weight="700" fill="#7A2E0E">Inspection</text>
+      <text x="16" y="60" fill="#5B6573">Réf. COD 2026 0012 / 0001</text>
+      <text x="16" y="80" fill="#5B6573">Quantités inspectées,</text>
+      <text x="16" y="100" fill="#5B6573">rapport joint</text>
+    </g>
+    <g transform="translate(934,495)" filter="url(#sh)">
+      <rect width="212" height="120" rx="12" fill="#FCEFE3" stroke="#F3C9A1"/>
+      <text x="16" y="32" font-size="18" font-weight="700" fill="#7A2E0E">Décision</text>
+      <rect x="16" y="46" width="84" height="26" rx="13" fill="#E7F3EC"/>
+      <text x="58" y="64" font-size="14" font-weight="700" fill="#1E7A4C" text-anchor="middle">AV</text>
+      <rect x="110" y="46" width="84" height="26" rx="13" fill="#FBEAE8"/>
+      <text x="152" y="64" font-size="14" font-weight="700" fill="#B42318" text-anchor="middle">ARA</text>
+      <text x="16" y="100" fill="#5B6573">AV = quantités libérées</text>
+    </g>
+  </g>
+
+  <!-- ===== Douane et documents (rattachés à Expédition / Réception) ===== -->
+  <path d="M1220,400 L1220,440 L1560,440 L1560,462" stroke="#1F4E79" stroke-width="2" fill="none" stroke-dasharray="6 5" marker-end="url(#arr)"/>
+  <path d="M960,400 L960,420" stroke="none"/>
+  <g transform="translate(1280,468)" filter="url(#sh)">
+    <rect width="570" height="202" rx="14" fill="#FFFFFF" stroke="#DDE1E6"/>
+    <rect width="6" height="202" rx="3" fill="#1F4E79"/>
+    <text x="28" y="38" font-size="18" font-weight="700" fill="#1B2430">Douane &amp; check-list documentaire</text>
+    <g font-size="15" fill="#1B2430">
+      <circle cx="36" cy="70" r="4" fill="#1F4E79"/><text x="50" y="75">Agence en douane + n° de dossier, avant tout document du transitaire</text>
+      <circle cx="36" cy="100" r="4" fill="#1F4E79"/><text x="50" y="105">Documents obligatoires, bloquants au départ ou à la réception</text>
+      <circle cx="36" cy="130" r="4" fill="#1F4E79"/><text x="50" y="135">Validation à deux niveaux · dérogation tracée</text>
+      <circle cx="36" cy="160" r="4" fill="#1F4E79"/><text x="50" y="165">AV et rapport d’inspection renseignés automatiquement</text>
+      <circle cx="36" cy="190" r="4" fill="#1F4E79" opacity="0"/>
+    </g>
+    <text x="28" y="192" font-size="13" fill="#5B6573">Portail transitaire : l’agence dépose ses documents et son n° de dossier.</text>
+  </g>
+
+  <!-- ===== Socle transverse ===== -->
+  <text x="70" y="738" font-size="15" font-weight="700" fill="#1F4E79" letter-spacing="2">À CHAQUE ÉTAPE</text>
+  <line x1="225" y1="733" x2="1850" y2="733" stroke="#DDE1E6" stroke-width="1.5"/>
+  <g font-size="15">
+    <g transform="translate(70,760)" filter="url(#sh)">
+      <rect width="425" height="150" rx="14" fill="#1F4E79"/>
+      <text x="26" y="46" font-size="20" font-weight="700" fill="#FFFFFF">Cockpit &amp; alertes</text>
+      <text x="26" y="80" fill="#D6E2EE">« À faire aujourd’hui », pastilles du menu,</text>
+      <text x="26" y="102" fill="#D6E2EE">prochaine action proposée après chaque</text>
+      <text x="26" y="124" fill="#D6E2EE">étape, barre « Dossier » sur chaque fiche.</text>
+    </g>
+    <g transform="translate(521,760)" filter="url(#sh)">
+      <rect width="425" height="150" rx="14" fill="#FFFFFF" stroke="#DDE1E6"/>
+      <text x="26" y="46" font-size="20" font-weight="700" fill="#1B2430">Traçabilité complète</text>
+      <text x="26" y="80" fill="#5B6573">Chaque camion rattaché à ses AV,</text>
+      <text x="26" y="102" fill="#5B6573">historique de chaque action,</text>
+      <text x="26" y="124" fill="#5B6573">pièces jointes et décisions conservées.</text>
+    </g>
+    <g transform="translate(972,760)" filter="url(#sh)">
+      <rect width="425" height="150" rx="14" fill="#FFFFFF" stroke="#DDE1E6"/>
+      <text x="26" y="46" font-size="20" font-weight="700" fill="#1B2430">Multi-sites · multi-devises</text>
+      <text x="26" y="80" fill="#5B6573">Accès limité aux sites de chacun,</text>
+      <text x="26" y="102" fill="#5B6573">montants convertis en devise de base,</text>
+      <text x="26" y="124" fill="#5B6573">stock valorisé au CMUP.</text>
+    </g>
+    <g transform="translate(1423,760)" filter="url(#sh)">
+      <rect width="427" height="150" rx="14" fill="#FFFFFF" stroke="#DDE1E6"/>
+      <text x="26" y="46" font-size="20" font-weight="700" fill="#1B2430">Rapports &amp; exports</text>
+      <text x="26" y="80" fill="#5B6573">Tableaux filtrables, détail de chaque</text>
+      <text x="26" y="102" fill="#5B6573">indicateur, exports Excel et PDF,</text>
+      <text x="26" y="124" fill="#5B6573">bons de commande et de livraison imprimables.</text>
+    </g>
+  </g>
+
+  <!-- Légende -->
+  <g transform="translate(70,975)" font-size="14" fill="#5B6573">
+    <line x1="0" y1="0" x2="40" y2="0" stroke="#1F4E79" stroke-width="3" marker-end="url(#arr)"/>
+    <text x="52" y="5">Flux principal</text>
+    <line x1="190" y1="0" x2="230" y2="0" stroke="#B54708" stroke-width="2.5" stroke-dasharray="7 5" marker-end="url(#arrO)"/>
+    <text x="242" y="5">Branche importation</text>
+    <line x1="420" y1="0" x2="460" y2="0" stroke="#1E7A4C" stroke-width="2.5" marker-end="url(#arrG)"/>
+    <text x="472" y="5">Libération (AV)</text>
+    <line x1="625" y1="0" x2="665" y2="0" stroke="#B42318" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#arr)"/>
+    <text x="677" y="5">Régularisation (ARA)</text>
+  </g>
+  <text x="1850" y="1040" font-size="13" fill="#8D9098" text-anchor="end">ETHAN LM · BELEJ-CONSULTING · Support de formation</text>
+</svg>

@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Guide de formation — Workflow ETHAN LM</title>
+<style>
+  :root { --navy: #1F4E79; --navy-soft: #E8EEF4; --orange: #B54708; --orange-soft: #FCEFE3; --green: #1E7A4C; --green-soft: #E7F3EC;
+          --red: #B42318; --red-soft: #FBEAE8; --text: #1B2430; --muted: #5B6573; --border: #DDE1E6; --bg: #F5F6F8; }
+  @page { size: A4; margin: 16mm 15mm 18mm; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Segoe UI", "IBM Plex Sans", Arial, sans-serif; color: var(--text); font-size: 10pt; line-height: 1.42; }
+  h1, h2, h3 { line-height: 1.25; margin: 0; }
+  h2 { font-size: 17pt; color: var(--navy); margin: 0 0 4mm; padding-bottom: 2mm; border-bottom: 2px solid var(--navy); }
+  h3 { font-size: 12pt; margin: 5mm 0 2mm; }
+  p { margin: 0 0 3mm; }
+  .page { page-break-after: always; }
+  .page:last-child { page-break-after: auto; }
+  .muted { color: var(--muted); }
+
+  /* Couverture */
+  .cover { height: 263mm; display: flex; flex-direction: column; justify-content: space-between; padding: 6mm 2mm; }
+  .brand { display: flex; align-items: center; gap: 4mm; }
+  .brand__mark { width: 14mm; height: 14mm; border-radius: 3mm; background: var(--navy); color: #fff; display: grid; place-items: center; font-size: 20pt; font-weight: 700; }
+  .brand strong { display: block; font-size: 15pt; }
+  .brand small { display: block; letter-spacing: .15em; font-size: 8pt; color: var(--muted); }
+  .cover__title { font-size: 32pt; font-weight: 700; color: var(--text); margin: 0 0 4mm; }
+  .cover__sub { font-size: 14pt; color: var(--muted); max-width: 150mm; }
+  .cover__band { height: 3mm; width: 40mm; background: var(--navy); border-radius: 2mm; margin-bottom: 8mm; }
+  .cover__meta { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; font-size: 9.5pt; }
+  .cover__meta div { border-top: 1px solid var(--border); padding-top: 3mm; }
+  .cover__meta b { display: block; color: var(--muted); font-weight: 600; font-size: 8pt; letter-spacing: .08em; text-transform: uppercase; }
+
+  /* Illustration */
+  .figure { margin: 0 0 4mm; border: 1px solid var(--border); border-radius: 3mm; overflow: hidden; }
+  .figure img { display: block; width: 100%; }
+  .caption { font-size: 8.5pt; color: var(--muted); margin-top: -2mm; margin-bottom: 4mm; }
+
+  /* Encadrés */
+  .box { border: 1px solid var(--border); border-left: 4px solid var(--navy); border-radius: 2mm; padding: 3mm 4mm; margin: 3mm 0; background: #fff; break-inside: avoid; }
+  .box--import { border-left-color: var(--orange); background: var(--orange-soft); border-color: #F3C9A1; }
+  .box--ok { border-left-color: var(--green); background: var(--green-soft); border-color: #B7E0C8; }
+  .box--warn { border-left-color: var(--red); background: var(--red-soft); border-color: #F4C7C2; }
+  .box b.title { display: block; margin-bottom: 1mm; }
+
+  /* Étapes */
+  .step { display: grid; grid-template-columns: 11mm 1fr; gap: 3mm; padding: 2mm 0; border-bottom: 1px solid var(--border); break-inside: avoid; }
+  .step:last-child { border-bottom: 0; }
+  .step__n { width: 9mm; height: 9mm; border-radius: 50%; background: var(--navy); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 11pt; }
+  .step__n--g { background: var(--green); }
+  .step__head { display: flex; align-items: baseline; gap: 3mm; flex-wrap: wrap; margin-bottom: 1mm; }
+  .step__head h3 { margin: 0; font-size: 12.5pt; }
+  .tag { display: inline-block; font-size: 8pt; font-weight: 600; padding: .4mm 2.5mm; border-radius: 3mm; background: var(--navy-soft); color: var(--navy); }
+  .tag--o { background: var(--orange-soft); color: var(--orange); }
+  .tag--g { background: var(--green-soft); color: var(--green); }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; }
+  .step ul, .box ul { margin: 1mm 0 0; padding-left: 4.5mm; }
+  .step li, .box li { margin: .3mm 0; }
+  .where { font-size: 9pt; color: var(--muted); }
+  .where code { font-family: Consolas, monospace; font-size: 8.5pt; background: var(--bg); padding: .2mm 1.2mm; border-radius: 1mm; color: var(--text); }
+
+  /* Tableaux */
+  table { width: 100%; border-collapse: collapse; font-size: 9.5pt; margin: 2mm 0 4mm; break-inside: avoid; }
+  th { text-align: left; background: var(--navy); color: #fff; font-weight: 600; padding: 1.6mm 3mm; }
+  td { padding: 1.4mm 3mm; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:nth-child(even) td { background: #FAFBFC; }
+  td b { white-space: nowrap; }
+  .pill { display: inline-block; padding: 0 2mm; border-radius: 2mm; font-size: 8.5pt; font-weight: 700; }
+  .pill--av { background: var(--green-soft); color: var(--green); }
+  .pill--ara { background: var(--red-soft); color: var(--red); }
+  .dot { display: inline-block; width: 2.6mm; height: 2.6mm; border-radius: 50%; vertical-align: -.2mm; margin-right: 1mm; }
+
+  /* Pied de page imprimé */
+  .foot { position: fixed; bottom: -11mm; left: 0; right: 0; font-size: 7.5pt; color: #8D9098; display: flex; justify-content: space-between; }
+  .check { list-style: none; padding: 0; margin: 0; columns: 2; column-gap: 8mm; }
+  .check li { break-inside: avoid; padding-left: 6mm; position: relative; margin: 0 0 2mm; }
+  .check li::before { content: ""; position: absolute; left: 0; top: 1mm; width: 3.4mm; height: 3.4mm; border: 1.3px solid var(--navy); border-radius: .8mm; }
+</style>
+</head>
+<body>
+
+<!-- ============ Couverture ============ -->
+<section class="page cover">
+  <div class="brand"><span class="brand__mark">E</span><span><strong>ETHAN LM</strong><small>LOGISTICS MANAGEMENT</small></span></div>
+  <div>
+    <div class="cover__band"></div>
+    <h1 class="cover__title">Le workflow d’un dossier,<br>du PO client à la clôture</h1>
+    <p class="cover__sub">Guide de formation des utilisateurs : les étapes, les responsables, les contrôles et les bons réflexes dans ETHAN LM.</p>
+  </div>
+  <div class="figure"><img src="workflow-ethan-lm.png" alt="Schéma du workflow ETHAN LM"></div>
+  <div class="cover__meta">
+    <div><b>Public</b>Commerciaux, acheteurs, équipe import, logistique, magasin, finance</div>
+    <div><b>Objectif</b>Savoir faire avancer un dossier, étape par étape, sans blocage</div>
+    <div><b>Version</b>Octobre 2026</div>
+  </div>
+</section>
+
+<!-- ============ 1. Vue d'ensemble ============ -->
+<section class="page">
+  <h2>1. Vue d’ensemble</h2>
+  <p>Dans ETHAN LM, tout part d’un <b>dossier</b> : le <b>PO client</b> (la commande reçue du client). Chaque dossier suit le même parcours en sept étapes. Pour les marchandises importées, une <b>branche importation</b> s’ajoute entre le PO fournisseur et l’expédition.</p>
+  <div class="figure" style="width:88%;margin-left:auto;margin-right:auto"><img src="workflow-ethan-lm.png" alt="Schéma du workflow ETHAN LM"></div>
+  <p class="caption" style="text-align:center">Le flux principal (bleu), la branche importation (orange), la libération par AV (vert) et la régularisation d’un ARA (rouge).</p>
+
+  <h3>Les sept étapes en un coup d’œil</h3>
+  <table>
+    <tr><th style="width:6%">#</th><th style="width:20%">Étape</th><th style="width:22%">Responsable</th><th>Ce qui doit être fait</th></tr>
+    <tr><td>1</td><td><b>PO client</b></td><td>Commercial</td><td>Enregistrer la commande du client : lignes, quantités, prix, devise, mode (achat local, import, stock).</td></tr>
+    <tr><td>2</td><td><b>Sourcing</b></td><td>Acheteur</td><td>Saisir les devis des fournisseurs et retenir la meilleure offre.</td></tr>
+    <tr><td>3</td><td><b>PO fournisseur</b></td><td>Acheteur</td><td>Émettre le bon de commande fournisseur, puis l’envoyer.</td></tr>
+    <tr><td>4</td><td><b>Expédition</b></td><td>Logistique · Transitaire</td><td>Créer l’expédition (camion, quantités), désigner l’agence en douane, compléter les documents.</td></tr>
+    <tr><td>5</td><td><b>Réception</b></td><td>Magasin · Client</td><td>Confirmer la livraison et les quantités reçues.</td></tr>
+    <tr><td>6</td><td><b>Facturation</b></td><td>Finance</td><td>Enregistrer les factures client et fournisseur, puis les paiements.</td></tr>
+    <tr><td>7</td><td><b>Clôture</b></td><td>Responsable</td><td>Vérifier les contrôles de fin et clôturer le dossier.</td></tr>
+  </table>
+
+  <div class="box box--ok"><b class="title">Le bon réflexe</b>
+    Sur chaque fiche, la <b>barre « Dossier »</b> en haut de page montre où vous êtes (PO client › PO fournisseur › Licence › Inspection › Expédition). Après chaque enregistrement, ETHAN LM vous <b>propose la prochaine étape</b> : cliquez dessus pour continuer sans chercher.</div>
+</section>
+
+<!-- ============ 2. Étapes détaillées ============ -->
+<section class="page">
+  <h2>2. Les étapes en détail</h2>
+
+  <div class="step"><span class="step__n">1</span><div>
+    <div class="step__head"><h3>PO client</h3><span class="tag">Commercial</span></div>
+    <p>Point de départ du dossier. Le mode d’exécution choisi ici décide de la suite : <b>import</b> active la branche licence / inspection.</p>
+    <ul><li>Client, n° de PO du client, date requise, devise, conditions de paiement.</li>
+      <li>Lignes : articles, quantités, prix unitaires.</li></ul>
+    <p class="where">Où : menu <code>PO clients</code> → <code>Nouveau PO client</code>.</p>
+  </div></div>
+
+  <div class="step"><span class="step__n">2</span><div>
+    <div class="step__head"><h3>Sourcing</h3><span class="tag">Acheteur</span></div>
+    <ul><li>Enregistrer un ou plusieurs devis fournisseurs sur le dossier.</li>
+      <li>Retenir l’offre ; les offres écartées restent tracées.</li></ul>
+    <p class="where">Où : fiche du PO client, onglet <code>Achats</code>.</p>
+  </div></div>
+
+  <div class="step"><span class="step__n">3</span><div>
+    <div class="step__head"><h3>PO fournisseur</h3><span class="tag">Acheteur</span></div>
+    <ul><li>Créer le PO fournisseur à partir du dossier (les lignes du PO client sont reprises).</li>
+      <li>Vérifier, imprimer si besoin, puis <b>envoyer</b> : tant qu’il est en brouillon, rien ne peut être expédié.</li></ul>
+    <p class="where">Où : fiche du PO client → onglet <code>Achats</code> ; ou menu <code>PO fournisseurs</code>.</p>
+  </div></div>
+
+  <div class="step"><span class="step__n">4</span><div>
+    <div class="step__head"><h3>Expédition</h3><span class="tag">Logistique</span><span class="tag">Transitaire</span></div>
+    <ul><li>Créer l’expédition depuis le PO fournisseur : quantités chargées, camion, chauffeur, mode de transport.</li>
+      <li>En import, chaque quantité chargée est <b>imputée sur une AV</b> (attestation de vérification). On ne peut pas charger plus que ce qui a été libéré.</li>
+      <li><b>Désigner l’agence en douane</b> et son n° de dossier (onglet <code>Transport</code>).</li>
+      <li>Compléter la <b>check-list documentaire</b> (voir chapitre 4).</li></ul>
+    <p class="where">Où : fiche du PO fournisseur → <code>Nouvelle expédition</code> ; suivi dans le menu <code>Livraisons</code>.</p>
+  </div></div>
+
+  <div class="step"><span class="step__n">5</span><div>
+    <div class="step__head"><h3>Réception</h3><span class="tag">Magasin</span><span class="tag">Client</span></div>
+    <ul><li>Confirmer l’arrivée : date, personne qui réceptionne, quantités reçues.</li>
+      <li>Les écarts entre chargé et reçu sont signalés automatiquement.</li></ul>
+  </div></div>
+
+  <div class="step"><span class="step__n">6</span><div>
+    <div class="step__head"><h3>Facturation</h3><span class="tag">Finance</span></div>
+    <ul><li>Factures client et fournisseur, échéances, paiements reçus et versés.</li>
+      <li>Une facture échue apparaît en rouge dans le cockpit et dans le menu.</li></ul>
+    <p class="where">Où : fiche du PO client, onglet <code>Finance</code> ; menu <code>Factures &amp; paiements</code>.</p>
+  </div></div>
+
+  <div class="step"><span class="step__n step__n--g">7</span><div>
+    <div class="step__head"><h3>Clôture</h3><span class="tag tag--g">Responsable</span></div>
+    <ul><li>Les contrôles de fin s’affichent dans l’onglet <code>Clôture</code> : livraisons complètes, factures soldées, documents en règle.</li>
+      <li>Une fois tout au vert, clôturer le dossier : il passe en lecture seule.</li></ul>
+  </div></div>
+</section>
+
+<!-- ============ 3. Importation ============ -->
+<section class="page">
+  <h2>3. La branche importation</h2>
+  <p>Pour un dossier en mode <b>import</b>, la marchandise ne peut pas être chargée tant qu’elle n’a pas été <b>autorisée</b> (licence) puis <b>libérée</b> (AV). Trois étapes s’intercalent entre le PO fournisseur et l’expédition.</p>
+
+  <div class="grid2">
+    <div class="box box--import"><b class="title">a. Licence d’importation</b>
+      <ul><li>Une licence par PO fournisseur.</li>
+        <li><b>N° de licence</b> = le « N° de validation » du document ; le <b>COD</b> est saisi à part (format <i>COD 2026 0012</i>).</li>
+        <li>Valeur autorisée = <b>FOB + fret + assurance + autres frais = CIF</b>.</li>
+        <li>Gain de temps : <b>importer le PDF</b> de la licence, ETHAN LM lit les champs ; il reste à vérifier.</li></ul>
+    </div>
+    <div class="box box--import"><b class="title">b. Inspection</b>
+      <ul><li>Référence dérivée du COD : <i>COD 2026 0012 / 0001</i>, modifiable.</li>
+        <li>Quantités inspectées et conformes par article.</li>
+        <li>Rapport d’inspection joint (on peut l’ajouter ou le remplacer après coup).</li></ul>
+    </div>
+  </div>
+
+  <h3>c. La décision</h3>
+  <table>
+    <tr><th style="width:16%">Décision</th><th>Signification</th><th style="width:40%">Ce qu’il faut faire</th></tr>
+    <tr><td><span class="pill pill--av">AV</span></td><td>Attestation de vérification : les quantités conformes sont <b>libérées</b>.</td><td>Créer l’expédition : les quantités chargées sont imputées sur l’AV (au plus ancien d’abord, modifiable).</td></tr>
+    <tr><td><span class="pill pill--ara">ARA</span></td><td>Attestation de refus : la marchandise ne peut pas partir en l’état.</td><td>Régulariser : nouvelle inspection rattachée à l’ARA, jusqu’à obtenir une AV.</td></tr>
+  </table>
+
+  <div class="box"><b class="title">Ce que le logiciel contrôle pour vous</b>
+    <ul><li>Disponible au chargement = <b>inspecté → libéré (AV) − déjà chargé</b> : impossible de charger au-delà.</li>
+      <li>Chaque camion garde la trace des AV qui le couvrent (affichée sur l’expédition et le bon de livraison).</li>
+      <li>Les documents <b>AV</b> et <b>Rapport d’inspection</b> de la check-list sont remplis automatiquement ; ils restent à valider.</li>
+      <li>Licence expirée ou proche de l’échéance : alerte dans le cockpit et sur le menu <code>Licences d’import</code>.</li></ul>
+  </div>
+</section>
+
+<!-- ============ 4. Douane & documents ============ -->
+<section class="page">
+  <h2>4. Douane et check-list documentaire</h2>
+  <p>Chaque dossier et chaque expédition ont une <b>check-list de documents</b> calculée selon des règles (mode, famille d’articles, transport). Certains documents sont <b>bloquants</b> : tant qu’ils ne sont pas validés, l’étape suivante (départ, réception, facturation, clôture) est impossible.</p>
+
+  <h3>Cycle de vie d’un document</h3>
+  <table>
+    <tr><th style="width:24%">Statut</th><th>Signification</th></tr>
+    <tr><td><span class="dot" style="background:#8D9098"></span><b>À fournir</b></td><td>Attendu, pas encore déposé.</td></tr>
+    <tr><td><span class="dot" style="background:#B54708"></span><b>À valider</b></td><td>Déposé (fichier, n°, date d’émission), en attente de contrôle.</td></tr>
+    <tr><td><span class="dot" style="background:#1E7A4C"></span><b>Validé</b></td><td>Contrôlé à deux niveaux. Attention à la date d’expiration éventuelle.</td></tr>
+    <tr><td><span class="dot" style="background:#B42318"></span><b>Rejeté</b></td><td>À redéposer, avec le motif du rejet.</td></tr>
+    <tr><td><span class="dot" style="background:#1F4E79"></span><b>Dérogé / non applicable</b></td><td>Décision tracée (motif obligatoire) : le document ne bloque plus.</td></tr>
+  </table>
+
+  <div class="box box--warn"><b class="title">Règle importante : l’agence en douane d’abord</b>
+    Les documents fournis par le transitaire (IM4, liquidation, quittance, FERI…) <b>ne peuvent pas être déposés</b> tant qu’aucune agence en douane n’est désignée. Le bouton de dépôt est remplacé par un cadenas <i>« Agence en douane à désigner »</i> qui mène directement au bon endroit. Dérogation et « non applicable » restent possibles.</div>
+
+  <h3>L’agence en douane</h3>
+  <ul>
+    <li>Choisie dans le référentiel <code>Agences en douane</code> (agrément, contacts, postes desservis).</li>
+    <li>Sur l’expédition : agence + <b>n° de dossier de l’agence</b>. Une expédition d’import sans n° de dossier est signalée.</li>
+    <li><b>Portail transitaire</b> : l’agence peut se connecter, voir uniquement ses expéditions, déposer ses documents et renseigner son n° de dossier.</li>
+  </ul>
+</section>
+
+<!-- ============ 5. Pilotage ============ -->
+<section class="page">
+  <h2>5. Piloter son activité au quotidien</h2>
+
+  <h3>Le cockpit (page d’accueil)</h3>
+  <table>
+    <tr><th style="width:28%">Bloc</th><th>À quoi il sert</th></tr>
+    <tr><td><b>À faire aujourd’hui</b></td><td>Les actions classées par urgence (rouge, orange, bleu). Replié par défaut ; cliquez pour l’ouvrir.</td></tr>
+    <tr><td><b>Tuiles</b></td><td>PO clients, PO fournisseurs, licences, livraisons : chiffres clés et montants en devise de base.</td></tr>
+    <tr><td><b>Graphiques</b></td><td>Livraisons sur six mois, engagement par fournisseur, consommation des licences.</td></tr>
+    <tr><td><b>Pipeline</b></td><td>Combien de dossiers à chaque étape : on voit où ça bloque.</td></tr>
+    <tr><td><b>Listes</b></td><td>Livraisons en cours, licences (échéance et consommation), activité récente.</td></tr>
+  </table>
+  <div class="box box--ok"><b class="title">Astuce</b>Chaque chiffre, barre de graphique ou étape du pipeline est <b>cliquable</b> : le détail s’ouvre dans une fenêtre, avec export <b>Excel</b> ou <b>PDF</b>.</div>
+
+  <h3>Les pastilles du menu</h3>
+  <p>Une pastille par rubrique indique le nombre d’objets à traiter. Sa couleur est celle de l’action la plus urgente :</p>
+  <table>
+    <tr><th style="width:20%">Couleur</th><th>Signification</th><th style="width:44%">Exemples</th></tr>
+    <tr><td><span class="dot" style="background:#F04438"></span><b>Rouge</b></td><td>Urgent</td><td>PO client en retard, facture échue, ARA, document rejeté, licence expirant sous 7 jours</td></tr>
+    <tr><td><span class="dot" style="background:#F79009"></span><b>Orange</b></td><td>À traiter</td><td>Documents manquants ou à valider, licence expirant sous 30 jours, agence non désignée</td></tr>
+    <tr><td><span class="dot" style="background:#2E90FA"></span><b>Bleu</b></td><td>À suivre</td><td>PO à envoyer, licence à saisir, dossier à sourcer ou à clôturer</td></tr>
+  </table>
+  <p>Survolez la pastille pour voir les actions ; cliquez dessus pour ouvrir la liste détaillée.</p>
+</section>
+
+<!-- ============ 6. Glossaire & check ============ -->
+<section class="page">
+  <h2>6. Glossaire</h2>
+  <table>
+    <tr><th style="width:18%">Terme</th><th>Définition</th></tr>
+    <tr><td><b>PO client</b></td><td>Commande reçue du client ; elle ouvre le dossier.</td></tr>
+    <tr><td><b>PO fournisseur</b></td><td>Bon de commande émis vers le fournisseur.</td></tr>
+    <tr><td><b>Licence</b></td><td>Autorisation d’importation ; son n° est le « N° de validation ».</td></tr>
+    <tr><td><b>COD</b></td><td>Référence de la licence (ex. COD 2026 0012) ; sert de base aux références d’inspection.</td></tr>
+    <tr><td><b>FOB / CIF</b></td><td>Valeur de la marchandise départ ; CIF = FOB + fret + assurance (+ autres frais).</td></tr>
+    <tr><td><b>AV</b></td><td>Attestation de vérification : libère les quantités conformes.</td></tr>
+    <tr><td><b>ARA</b></td><td>Attestation de refus : nécessite une régularisation.</td></tr>
+    <tr><td><b>Agence en douane</b></td><td>Transitaire qui déclare l’expédition ; elle a son propre n° de dossier.</td></tr>
+    <tr><td><b>Document bloquant</b></td><td>Document obligatoire qui empêche une étape tant qu’il n’est pas validé ou dérogé.</td></tr>
+    <tr><td><b>CMUP</b></td><td>Coût moyen unitaire pondéré : méthode de valorisation du stock, en devise de base.</td></tr>
+  </table>
+
+  <h2 style="margin-top:7mm">7. Exercice de fin de formation</h2>
+  <p>Faire avancer un dossier d’import complet sur l’environnement de test :</p>
+  <ul class="check">
+    <li>Créer un PO client en mode import</li>
+    <li>Saisir un devis et créer le PO fournisseur</li>
+    <li>Envoyer le PO fournisseur</li>
+    <li>Importer la licence depuis son PDF et vérifier le COD</li>
+    <li>Déclarer l’inspection et joindre le rapport</li>
+    <li>Enregistrer la décision AV</li>
+    <li>Créer l’expédition et vérifier l’imputation sur l’AV</li>
+    <li>Désigner l’agence en douane et son n° de dossier</li>
+    <li>Déposer puis valider les documents bloquants</li>
+    <li>Confirmer la réception</li>
+    <li>Saisir la facture client et son paiement</li>
+    <li>Clôturer le dossier</li>
+  </ul>
+</section>
+</body>
+</html>

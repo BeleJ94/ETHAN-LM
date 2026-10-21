@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Cahier d’exercices — ETHAN LM</title>
+<style>
+  :root { --navy: #1F4E79; --soft: #E8EEF4; --green: #1E7A4C; --green-soft: #E7F3EC; --orange: #B54708; --orange-soft: #FCEFE3;
+          --red: #B42318; --red-soft: #FBEAE8; --text: #1B2430; --muted: #5B6573; --border: #DDE1E6; }
+  @page { size: A4; margin: 15mm 14mm 15mm; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Segoe UI", Arial, sans-serif; color: var(--text); font-size: 9.8pt; line-height: 1.4; }
+  h1 { font-size: 22pt; margin: 0 0 2mm; }
+  h2 { font-size: 14pt; color: var(--navy); margin: 6mm 0 3mm; padding-bottom: 1.5mm; border-bottom: 2px solid var(--navy); }
+  p { margin: 0 0 2.5mm; }
+  .muted { color: var(--muted); }
+  .head { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid var(--border); padding-bottom: 4mm; margin-bottom: 4mm; }
+  .brand { display: flex; align-items: center; gap: 3mm; }
+  .mark { width: 11mm; height: 11mm; border-radius: 2.5mm; background: var(--navy); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 15pt; }
+  .meta { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3mm; font-size: 9pt; margin: 3mm 0; }
+  .meta div { border: 1px solid var(--border); border-radius: 2mm; padding: 2mm 3mm; }
+  .meta b { display: block; font-size: 7.5pt; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+  .box { border: 1px solid var(--border); border-left: 4px solid var(--navy); border-radius: 2mm; padding: 2.5mm 3.5mm; margin: 2.5mm 0; break-inside: avoid; }
+  .box--warn { border-left-color: var(--orange); background: var(--orange-soft); border-color: #F3C9A1; }
+  .box ul { margin: 1mm 0 0; padding-left: 4.5mm; }
+  table { width: 100%; border-collapse: collapse; font-size: 9pt; margin: 2mm 0 3mm; }
+  th { background: var(--navy); color: #fff; text-align: left; font-weight: 600; padding: 1.5mm 2.5mm; }
+  td { border-bottom: 1px solid var(--border); padding: 1.5mm 2.5mm; vertical-align: top; }
+  /* Cas de test */
+  .tc { border: 1px solid var(--border); border-radius: 2.5mm; margin: 0 0 4mm; break-inside: avoid; overflow: hidden; }
+  .tc__head { display: flex; align-items: center; gap: 3mm; background: var(--soft); padding: 2mm 3mm; }
+  .tc__id { font-weight: 700; color: #fff; background: var(--navy); border-radius: 1.5mm; padding: .5mm 2mm; font-size: 8.5pt; }
+  .tc__title { font-weight: 700; font-size: 10.5pt; flex: 1; }
+  .tc__level { font-size: 7.5pt; font-weight: 700; padding: .4mm 2mm; border-radius: 3mm; }
+  .lv1 { background: var(--green-soft); color: var(--green); } .lv2 { background: var(--orange-soft); color: var(--orange); } .lv3 { background: var(--red-soft); color: var(--red); }
+  .tc__goal { padding: 1.5mm 3mm 0; color: var(--muted); font-size: 9pt; }
+  .tc table { margin: 1.5mm 0 0; }
+  .tc th { background: #fff; color: var(--muted); border-bottom: 1px solid var(--border); font-size: 8pt; text-transform: uppercase; letter-spacing: .04em; }
+  .tc td:first-child { width: 6mm; color: var(--muted); }
+  .tc td:nth-child(2) { width: 50%; }
+  .tc__foot { display: flex; gap: 6mm; align-items: center; padding: 2mm 3mm; border-top: 1px dashed var(--border); font-size: 8.5pt; color: var(--muted); }
+  .cb { display: inline-block; width: 3.4mm; height: 3.4mm; border: 1.2px solid var(--navy); border-radius: .7mm; vertical-align: -.6mm; margin-right: 1mm; }
+  .line { flex: 1; border-bottom: 1px dotted #A9B0BA; height: 3.5mm; }
+  code { font-family: Consolas, monospace; font-size: 8.5pt; background: #F5F6F8; padding: 0 1mm; border-radius: 1mm; }
+  .pb { page-break-before: always; }
+  .suivi td { height: 13mm; }
+</style>
+</head>
+<body>
+
+<div class="head">
+  <div class="brand"><span class="mark">E</span><div><strong>ETHAN LM</strong><div class="muted" style="font-size:8pt;letter-spacing:.12em">LOGISTICS MANAGEMENT</div></div></div>
+  <div class="muted" style="font-size:8.5pt;text-align:right">Cahier d’exercices · préparation du formateur<br>Octobre 2026</div>
+</div>
+
+<h1>Cahier d’exercices</h1>
+<p class="muted">Pour s’entraîner sur ETHAN LM avant d’animer la formation chez le client. Chaque cas de test se fait en 5 à 15 minutes ; enchaînés dans l’ordre, ils déroulent un dossier complet.</p>
+
+<div class="meta">
+  <div><b>Durée totale</b>3 à 4 heures</div>
+  <div><b>Prérequis</b>Un compte administrateur sur l’environnement de test</div>
+  <div><b>Support associé</b>Guide « Workflow d’un dossier »</div>
+</div>
+
+<div class="box box--warn"><b>Avant de commencer</b>
+  <ul>
+    <li>Travaillez <b>uniquement sur l’environnement de test</b>, jamais sur les données réelles du client.</li>
+    <li>Préfixez tout ce que vous créez par <code>TEST-</code> (références, n° de PO, n° de licence) pour le retrouver et le supprimer facilement.</li>
+    <li>Ayez sous la main un PDF de licence d’importation (pour TC05) et un PDF quelconque à joindre comme document (rapport, facture…).</li>
+    <li>Pour chaque cas : cochez <b>OK</b> si le résultat attendu est obtenu, sinon notez ce que vous avez observé.</li>
+  </ul>
+</div>
+
+<h2>Jeu de données conseillé</h2>
+<table>
+  <tr><th style="width:30%">Élément</th><th>Valeur à utiliser</th></tr>
+  <tr><td>Client</td><td>Un client existant du référentiel</td></tr>
+  <tr><td>Fournisseur</td><td>Un fournisseur existant (ou créez <code>TEST-FOURNISSEUR</code>)</td></tr>
+  <tr><td>Article</td><td>Un article existant, ou <code>TEST-ART</code> (unité : tonne)</td></tr>
+  <tr><td>PO client</td><td>N° client <code>TEST-PO-001</code> · 3 000 t × 800 USD · mode <b>Import</b></td></tr>
+  <tr><td>PO fournisseur</td><td>3 000 t × 680 USD</td></tr>
+  <tr><td>Licence</td><td>N° <code>TEST-DEC-001</code> · COD <code>COD 2026 0999</code> · FOB 2 040 000 · fret 40 000 · assurance 10 000 USD</td></tr>
+  <tr><td>Agence en douane</td><td>Une agence existante, ou <code>TEST Agence</code></td></tr>
+</table>
+
+<h2 class="pb" style="margin-top:0">Parcours principal (dossier d’import)</h2>
+
+<div class="tc">
+  <div class="tc__head"><span class="tc__id">TC01</span><span class="tc__title">Connexion et prise en main du cockpit</span><span class="tc__level lv1">Débutant</span></div>
+  <div class="tc__goal">Objectif : savoir lire la page d’accueil et retrouver une information.</div>
+  <table><tr><th>#</th><th>Action</th><th>Résultat attendu</th></tr>
+    <tr><td>1</td><td>Se connecter avec son e-mail et son mot de passe.</td><td>Arrivée sur le cockpit « Bonjour … ».</td></tr>
+    <tr><td>2</td><td>Ouvrir le bloc « À faire aujourd’hui ».</td><td>Liste des actions, classées rouge → orange → bleu.</td></tr>
+    <tr><td>3</td><td>Cliquer sur le chiffre de la tuile « PO clients ».</td><td>Une fenêtre s’ouvre avec le tableau des PO clients ouverts.</td></tr>
+    <tr><td>4</td><td>Dans cette fenêtre, cliquer sur <b>Excel</b>, puis sur <b>PDF</b>.</td><td>Les deux fichiers se téléchargent.</td></tr>
+    <tr><td>5</td><td>Survoler une pastille du menu de gauche, puis cliquer dessus.</td><td>Infobulle avec les actions ; au clic, fenêtre de détail.</td></tr>
+  </table>
+  <div class="tc__foot"><span><span class="cb"></span>OK</span><span><span class="cb"></span>Anomalie :</span><span class="line"></span></div>
+</div>
+
+<div class="tc">
+  <div class="tc__head"><span class="tc__id">TC02</span><span class="tc__title">Créer un PO client en mode import</span><span class="tc__level lv1">Débutant</span></div>
+  <table><tr><th>#</th><th>Action</th><th>Résultat attendu</th></tr>
+    <tr><td>1</td><td>Menu <code>PO clients</code> → <code>Nouveau PO client</code>.</td><td>Formulaire de création.</td></tr>
+    <tr><td>2</td><td>Saisir client, n° <code>TEST-PO-001</code>, date, devise USD, mode <b>Import</b>, une ligne 3 000 t × 800.</td><td>Total calculé : 2 400 000 USD.</td></tr>
+    <tr><td>3</td><td>Enregistrer.</td><td>Fiche du PO client ; la barre « Dossier » en haut montre l’étape PO client en cours et « PO fournisseur : à faire ».</td></tr>
+  </table>
+  <div class="tc__foot"><span><span class="cb"></span>OK</span><span><span class="cb"></span>Anomalie :</span><span class="line"></span></div>
+</div>
+
+<div class="tc">
+  <div class="tc__head"><span class="tc__id">TC03</span><span class="tc__title">Sourcing et PO fournisseur</span><span class="tc__level lv1">Débutant</span></div>
+  <table><tr><th>#</th><th>Action</th><th>Résultat attendu</th></tr>
+    <tr><td>1</td><td>Sur la fiche du PO client, onglet <code>Achats</code> : saisir un devis fournisseur.</td><td>Le devis apparaît dans la liste.</td></tr>
+    <tr><td>2</td><td>Créer le PO fournisseur (3 000 t × 680 USD).</td><td>PO fournisseur créé en <b>brouillon</b>.</td></tr>
+    <tr><td>3</td><td>Cliquer sur <b>Envoyer</b>.</td><td>Statut « émis » et proposition « Prochaine étape : Saisir la licence ».</td></tr>
+    <tr><td>4</td><td>Ouvrir l’aperçu d’impression du PO fournisseur.</td><td>Bon de commande avec l’en-tête de la société.</td></tr>
+  </table>
+  <div class="tc__foot"><span><span class="cb"></span>OK</span><span><span class="cb"></span>Anomalie :</span><span class="line"></span></div>
+</div>
+
+<div class="tc">
+  <div class="tc__head"><span class="tc__id">TC04</span><span class="tc__title">Saisir la licence d’importation (saisie manuelle)</span><span class="tc__level lv2">Intermédiaire</span></div>
+  <table><tr><th>#</th><th>Action</th><th>Résultat attendu</th></tr>
+    <tr><td>1</td><td>Suivre « Saisir la licence » proposé à l’étape précédente.</td><td>Formulaire avec le PO fournisseur déjà choisi et ses marchandises (codes SH) à droite.</td></tr>
+    <tr><td>2</td><td>Saisir n° <code>TEST-DEC-001</code>, COD <code>2026 0999</code>, dates, FOB / fret / assurance.</td><td>Le COD se met au format <code>COD 2026 0999</code> ; le CIF se calcule : 2 090 000 USD.</td></tr>
+    <tr><td>3</td><td>Joindre un PDF et enregistrer.</td><td>Retour sur le PO fournisseur, onglet Import, et proposition « Déclarer l’inspection ».</td></tr>
+  </table>
+  <div class="tc__foot"><span><span class="cb"></span>OK</span><span><span class="cb"></span>Anomalie :</span><span class="line"></span></div>
+</div>
+
+<div class="tc">
+  <div class="tc__head"><span class="tc__id">TC05</span><span class="tc__title">Importer une licence depuis son PDF</span><span class="tc__level lv2">Intermédiaire</span></div>
+  <div class="tc__goal">À faire sur un second PO fournisseur d’import sans licence (refaire TC02–TC03 avec <code>TEST-PO-002</code>).</div>
+  <table><tr><th>#</th><th>Action</th><th>Résultat attendu</th></tr>
+    <tr><td>1</td><td>Sur le PO fournisseur : <code>Depuis un document</code>, déposer le PDF de la licence.</td><td>Lecture du document, puis écran de vérification ; le PO est déjà présélectionné.</td></tr>
+    <tr><td>2</td><td>Vérifier chaque champ (statut « extrait », « incertain », « manquant ») et corriger si besoin.</td><td>Les corrections sont sauvegardées automatiquement.</td></tr>
+    <tr><td>3</td><td>Confirmer.</td><td>Licence créée, avec le PDF joint ; retour sur le PO fournisseur.</td></tr>
+  </table>
+  <div class="tc__foot"><span><span class="cb"></span>OK</span><span><span class="cb"></span>Anomalie :</span><span class="line"></span></div>
+</div>
+
+<div class="tc">
+  <div class="tc__head"><span class="tc__id">TC06</span><span class="tc__title">Inspection puis décision AV</span><span class="tc__level lv2">Intermédiaire</span></div>
+  <table><tr><th>#</th><th>Action</th><th>Résultat attendu</th></tr>
+    <tr><td>1</td><td>Déclarer l’inspection : inspecteur, date, 3 000 t inspectées et conformes, décision <b>en attente</b>.</td><td>Référence proposée <code>COD 2026 0999 / 0001</code>.</td></tr>
+    <tr><td>2</td><td>Enregistrer la décision <b>AV</b> avec son n° et sa date ; joindre le rapport.</td><td>Proposition « Créer l’expédition » ; le schéma de l’onglet Import montre 3 000 t libérées.</td></tr>
+  </table>
+  <div class="tc__foot"><span><span class="cb"></span>OK</span><span><span class="cb"></span>Anomalie :</span><span class="line"></span></div>
+</div>
+
+<div class="tc">
+  <div class="tc__head"><span class="tc__id">TC07</span><span class="tc__title">Expédition et imputation sur l’AV</span><span class="tc__level lv2">Intermédiaire</span></div>
+  <table><tr><th>#</th><th>Action</th><th>Résultat attendu</th></tr>
+    <tr><td>1</td><td>Créer une expédition de <b>3 500 t</b>.</td><td><b>Refus</b> : on ne peut pas charger plus que le disponible (3 000 t).</td></tr>
+    <tr><td>2</td><td>Corriger à 1 000 t, renseigner camion et chauffeur, enregistrer.</td><td>Expédition créée ; l’onglet Inspections (AV) montre 1 000 t imputées sur l’AV.</td></tr>
+    <tr><td>3</td><td>Revenir sur le PO fournisseur, onglet Import.</td><td>Disponible restant : 2 000 t.</td></tr>
+  </table>
+  <div class="tc__foot"><span><span class="cb"></span>OK</span><span><span class="cb"></span>Anomalie :</span><span class="line"></span></div>
+</div>
+
+<div class="tc">
+  <div class="tc__head"><span class="tc__id">TC08</span><span class="tc__title">Agence en douane et documents du transitaire</span><span class="tc__level lv2">Intermédiaire</span></div>
+  <table><tr><th>#</th><th>Action</th><th>Résultat attendu</th></tr>
+    <tr><td>1</td><td>Sur l’expédition, onglet Documents : repérer un document du transitaire (IM4, liquidation…).</td><td>Cadenas « Agence en douane à désigner » à la place du bouton de dépôt.</td></tr>
+    <tr><td>2</td><td>Cliquer sur le cadenas, choisir l’agence et saisir son n° de dossier.</td><td>Agence affichée sur l’expédition ; le cadenas disparaît.</td></tr>
+    <tr><td>3</td><td>Déposer le document (n°, date, fichier).</td><td>Statut « À valider ».</td></tr>
+  </table>
+  <div class="tc__foot"><span><span class="cb"></span>OK</span><span><span class="cb"></span>Anomalie :</span><span class="line"></span></div>
+</div>
+
+<div class="tc">
+  <div class="tc__head"><span class="tc__id">TC09</span><span class="tc__title">Check-list : valider, rejeter, déroger</span><span class="tc__level lv2">Intermédiaire</span></div>
+  <table><tr><th>#</th><th>Action</th><th>Résultat attendu</th></tr>
+    <tr><td>1</td><td>Valider le document déposé en TC08.</td><td>Statut « Validé » (selon le paramétrage, une seconde validation peut être demandée).</td></tr>
+    <tr><td>2</td><td>Déposer un autre document puis le <b>rejeter</b> avec un motif.</td><td>Statut « Rejeté », motif visible ; pastille rouge sur Livraisons.</td></tr>
+    <tr><td>3</td><td>Sur un document obligatoire non disponible : <b>Déroger</b> avec un motif.</td><td>Le document ne bloque plus ; la dérogation est tracée dans l’historique.</td></tr>
+    <tr><td>4</td><td>Vérifier les documents AV et Rapport d’inspection.</td><td>Déjà remplis à partir de l’AV, en attente de validation.</td></tr>
+  </table>
+  <div class="tc__foot"><span><span class="cb"></span>OK</span><span><span class="cb"></span>Anomalie :</span><span class="line"></span></div>
+</div>
+
+<div class="tc">
+  <div class="tc__head"><span class="tc__id">TC10</span><span class="tc__title">Départ et réception</span><span class="tc__level lv1">Débutant</span></div>
+  <table><tr><th>#</th><th>Action</th><th>Résultat attendu</th></tr>
+    <tr><td>1</td><td>Valider le départ du camion.</td><td>Refusé tant qu’un document bloquant au départ manque ; accepté une fois la check-list en règle.</td></tr>
+    <tr><td>2</td><td>Confirmer la réception avec <b>980 t</b> reçues.</td><td>Expédition « Livrée » ; écart de 20 t signalé.</td></tr>
+  </table>
+  <div class="tc__foot"><span><span class="cb"></span>OK</span><span><span class="cb"></span>Anomalie :</span><span class="line"></span></div>
+</div>
+
+<div class="tc">
+  <div class="tc__head"><span class="tc__id">TC11</span><span class="tc__title">Facturation, paiement et clôture</span><span class="tc__level lv1">Débutant</span></div>
+  <table><tr><th>#</th><th>Action</th><th>Résultat attendu</th></tr>
+    <tr><td>1</td><td>Sur le PO client, onglet Finance : saisir la facture client et la facture fournisseur.</td><td>Factures « ouvertes » avec leur échéance.</td></tr>
+    <tr><td>2</td><td>Enregistrer les paiements.</td><td>Factures « payées ».</td></tr>
+    <tr><td>3</td><td>Onglet Clôture : lire les contrôles, puis clôturer.</td><td>Clôture refusée tant qu’un contrôle est rouge ; possible quand tout est vert.</td></tr>
+  </table>
+  <div class="tc__foot"><span><span class="cb"></span>OK</span><span><span class="cb"></span>Anomalie :</span><span class="line"></span></div>
+</div>
+
+<h2 class="pb" style="margin-top:0">Cas complémentaires</h2>
+
+<div class="tc">
+  <div class="tc__head"><span class="tc__id">TC12</span><span class="tc__title">Inspection refusée (ARA) et régularisation</span><span class="tc__level lv3">Avancé</span></div>
+  <table><tr><th>#</th><th>Action</th><th>Résultat attendu</th></tr>
+    <tr><td>1</td><td>Sur <code>TEST-PO-002</code>, déclarer une inspection avec décision <b>ARA</b> et un motif.</td><td>Alerte rouge « ARA à régulariser » (cockpit et menu Licences).</td></tr>
+    <tr><td>2</td><td>Tenter de créer une expédition.</td><td>Rien n’est disponible au chargement.</td></tr>
+    <tr><td>3</td><td>Régulariser : nouvelle inspection rattachée à l’ARA, décision AV.</td><td>L’alerte disparaît ; les quantités deviennent disponibles.</td></tr>
+  </table>
+  <div class="tc__foot"><span><span class="cb"></span>OK</span><span><span class="cb"></span>Anomalie :</span><span class="line"></span></div>
+</div>
+
+<div class="tc">
+  <div class="tc__head"><span class="tc__id">TC13</span><span class="tc__title">Dossier d’achat local (sans import)</span><span class="tc__level lv1">Débutant</span></div>
+  <table><tr><th>#</th><th>Action</th><th>Résultat attendu</th></tr>
+    <tr><td>1</td><td>Créer <code>TEST-PO-003</code> en mode <b>Achat local</b>, puis son PO fournisseur, et l’envoyer.</td><td>La barre « Dossier » ne montre ni Licence ni Inspection.</td></tr>
+    <tr><td>2</td><td>Créer directement l’expédition.</td><td>Possible sans licence ni AV.</td></tr>
+  </table>
+  <div class="tc__foot"><span><span class="cb"></span>OK</span><span><span class="cb"></span>Anomalie :</span><span class="line"></span></div>
+</div>
+
+<div class="tc">
+  <div class="tc__head"><span class="tc__id">TC14</span><span class="tc__title">Droits d’accès et portail transitaire</span><span class="tc__level lv3">Avancé</span></div>
+  <table><tr><th>#</th><th>Action</th><th>Résultat attendu</th></tr>
+    <tr><td>1</td><td>Référentiel <code>Agences en douane</code> → fiche de l’agence → <b>Créer un accès</b>.</td><td>Formulaire utilisateur prérempli : rôle Transitaire, agence choisie.</td></tr>
+    <tr><td>2</td><td>Se connecter avec ce compte (navigation privée).</td><td>Le portail ne montre que les expéditions de cette agence.</td></tr>
+    <tr><td>3</td><td>Saisir le n° de dossier et déposer un document.</td><td>Visibles côté interne, document « À valider ».</td></tr>
+    <tr><td>4</td><td>Se connecter avec un compte « Lecteur ».</td><td>Consultation possible ; aucun bouton de création ni de modification.</td></tr>
+  </table>
+  <div class="tc__foot"><span><span class="cb"></span>OK</span><span><span class="cb"></span>Anomalie :</span><span class="line"></span></div>
+</div>
+
+<h2>Préparer sa démonstration chez le client</h2>
+<div class="box"><ul>
+  <li>Refaire le parcours TC02 → TC11 <b>sans le document</b>, en moins de 30 minutes.</li>
+  <li>Savoir répondre : « Pourquoi je ne peux pas charger ? » (pas d’AV ou disponible épuisé), « Pourquoi je ne peux pas déposer ce document ? » (agence non désignée), « Où voir ce qui est en retard ? » (cockpit et pastilles).</li>
+  <li>Préparer à l’avance un dossier déjà avancé jusqu’à l’expédition, pour ne pas attendre pendant la séance.</li>
+  <li>Après l’entraînement, supprimer ou annuler les éléments <code>TEST-</code>.</li>
+</ul></div>
+
+<h2 class="pb" style="margin-top:0">Fiche de suivi</h2>
+<table class="suivi">
+  <tr><th style="width:12%">Cas</th><th style="width:10%">OK</th><th>Remarque / anomalie constatée</th><th style="width:16%">Date</th></tr>
+  <tr><td>TC01</td><td><span class="cb"></span></td><td></td><td></td></tr>
+  <tr><td>TC02</td><td><span class="cb"></span></td><td></td><td></td></tr>
+  <tr><td>TC03</td><td><span class="cb"></span></td><td></td><td></td></tr>
+  <tr><td>TC04</td><td><span class="cb"></span></td><td></td><td></td></tr>
+  <tr><td>TC05</td><td><span class="cb"></span></td><td></td><td></td></tr>
+  <tr><td>TC06</td><td><span class="cb"></span></td><td></td><td></td></tr>
+  <tr><td>TC07</td><td><span class="cb"></span></td><td></td><td></td></tr>
+  <tr><td>TC08</td><td><span class="cb"></span></td><td></td><td></td></tr>
+  <tr><td>TC09</td><td><span class="cb"></span></td><td></td><td></td></tr>
+  <tr><td>TC10</td><td><span class="cb"></span></td><td></td><td></td></tr>
+  <tr><td>TC11</td><td><span class="cb"></span></td><td></td><td></td></tr>
+  <tr><td>TC12</td><td><span class="cb"></span></td><td></td><td></td></tr>
+  <tr><td>TC13</td><td><span class="cb"></span></td><td></td><td></td></tr>
+  <tr><td>TC14</td><td><span class="cb"></span></td><td></td><td></td></tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1350" viewBox="0 0 1080 1350" font-family="'Segoe UI', 'IBM Plex Sans', Arial, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.4" y2="1">
+      <stop offset="0" stop-color="#1F4E79"/>
+      <stop offset="1" stop-color="#12324F"/>
+    </linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#FFFFFF" stroke-opacity="0.05" stroke-width="1"/>
+    </pattern>
+    <marker id="a" viewBox="0 0 10 10" refX="5" refY="9" markerWidth="12" markerHeight="12" orient="auto">
+      <path d="M0,0 L10,0 L5,10 z" fill="#8FB3D6"/>
+    </marker>
+    <marker id="ao" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="11" markerHeight="11" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#F7B27A"/>
+    </marker>
+  </defs>
+
+  <rect width="1080" height="1350" fill="url(#bg)"/>
+  <rect width="1080" height="1350" fill="url(#grid)"/>
+
+  <!-- En-tête -->
+  <g transform="translate(70,70)">
+    <rect width="64" height="64" rx="15" fill="#FFFFFF"/>
+    <text x="32" y="44" font-size="34" font-weight="700" fill="#1F4E79" text-anchor="middle">E</text>
+    <text x="84" y="30" font-size="28" font-weight="700" fill="#FFFFFF">ETHAN LM</text>
+    <text x="84" y="58" font-size="17" fill="#B9CCE0" letter-spacing="3">LOGISTICS MANAGEMENT</text>
+  </g>
+  <text x="70" y="215" font-size="50" font-weight="700" fill="#FFFFFF">Du PO client à la livraison,</text>
+  <text x="70" y="275" font-size="50" font-weight="700" fill="#FFFFFF">chaque dossier sous contrôle.</text>
+
+  <!-- Colonne d'étapes -->
+  <g fill="#8FB3D6"><circle cx="140" cy="422" r="3"/><circle cx="140" cy="432" r="3"/><circle cx="140" cy="532" r="3"/><circle cx="140" cy="542" r="3"/><circle cx="140" cy="642" r="3"/><circle cx="140" cy="652" r="3"/><circle cx="140" cy="752" r="3"/><circle cx="140" cy="762" r="3"/><circle cx="140" cy="862" r="3"/><circle cx="140" cy="872" r="3"/><circle cx="140" cy="972" r="3"/><circle cx="140" cy="982" r="3"/></g>
+
+  <g font-size="30" font-weight="700" fill="#1B2430">
+    <!-- y de départ : 330 + 110 * (n-1), hauteur 84 -->
+    <g transform="translate(70,330)"><rect width="560" height="84" rx="16" fill="#FFFFFF"/><circle cx="70" cy="42" r="26" fill="#1F4E79"/><text x="70" y="52" font-size="26" fill="#FFF" text-anchor="middle">1</text><text x="116" y="53">PO client</text></g>
+    <g transform="translate(70,440)"><rect width="560" height="84" rx="16" fill="#FFFFFF"/><circle cx="70" cy="42" r="26" fill="#1F4E79"/><text x="70" y="52" font-size="26" fill="#FFF" text-anchor="middle">2</text><text x="116" y="53">Sourcing</text></g>
+    <g transform="translate(70,550)"><rect width="560" height="84" rx="16" fill="#FFFFFF"/><circle cx="70" cy="42" r="26" fill="#1F4E79"/><text x="70" y="52" font-size="26" fill="#FFF" text-anchor="middle">3</text><text x="116" y="53">PO fournisseur</text></g>
+    <g transform="translate(70,660)"><rect width="560" height="84" rx="16" fill="#FFFFFF"/><circle cx="70" cy="42" r="26" fill="#1F4E79"/><text x="70" y="52" font-size="26" fill="#FFF" text-anchor="middle">4</text><text x="116" y="53">Expédition</text></g>
+    <g transform="translate(70,770)"><rect width="560" height="84" rx="16" fill="#FFFFFF"/><circle cx="70" cy="42" r="26" fill="#1F4E79"/><text x="70" y="52" font-size="26" fill="#FFF" text-anchor="middle">5</text><text x="116" y="53">Réception</text></g>
+    <g transform="translate(70,880)"><rect width="560" height="84" rx="16" fill="#FFFFFF"/><circle cx="70" cy="42" r="26" fill="#1F4E79"/><text x="70" y="52" font-size="26" fill="#FFF" text-anchor="middle">6</text><text x="116" y="53">Facturation</text></g>
+    <g transform="translate(70,990)"><rect width="560" height="84" rx="16" fill="#E7F3EC"/><circle cx="70" cy="42" r="26" fill="#1E7A4C"/><text x="70" y="52" font-size="26" fill="#FFF" text-anchor="middle">✓</text><text x="116" y="53" fill="#14532D">Clôture</text></g>
+  </g>
+
+  <!-- Branche importation, entre PO fournisseur et Expédition -->
+  <path d="M630,592 C690,592 690,560 714,560" stroke="#F7B27A" stroke-width="3" fill="none" stroke-dasharray="8 6" marker-end="url(#ao)"/>
+    <g transform="translate(720,500)">
+    <rect width="290" height="300" rx="18" fill="#FFFFFF" fill-opacity="0.08" stroke="#F7B27A" stroke-width="2" stroke-dasharray="8 6"/>
+    <text x="24" y="44" font-size="19" font-weight="700" fill="#F7B27A" letter-spacing="2">IMPORTATION</text>
+    <g font-size="25" font-weight="600" fill="#FFFFFF">
+      <rect x="20" y="66" width="250" height="56" rx="12" fill="#FCEFE3"/><text x="40" y="103" fill="#7A2E0E">Licence · COD</text>
+      <text x="145" y="145" font-size="24" fill="#F7B27A" text-anchor="middle">↓</text>
+      <rect x="20" y="156" width="250" height="56" rx="12" fill="#FCEFE3"/><text x="40" y="193" fill="#7A2E0E">Inspection</text>
+      <text x="145" y="235" font-size="24" fill="#F7B27A" text-anchor="middle">↓</text>
+      <rect x="20" y="236" width="118" height="48" rx="12" fill="#E7F3EC"/><text x="79" y="268" font-size="23" font-weight="700" fill="#1E7A4C" text-anchor="middle">AV</text>
+      <rect x="152" y="236" width="118" height="48" rx="12" fill="#FBEAE8"/><text x="211" y="268" font-size="23" font-weight="700" fill="#B42318" text-anchor="middle">ARA</text>
+    </g>
+  </g>
+  <!-- AV → Expédition -->
+  <path d="M780,800 L780,830 L672,830 L672,702 L648,702" stroke="#6CE9A6" stroke-width="3" fill="none"/>
+  <path d="M634,702 L650,692 L650,712 z" fill="#6CE9A6"/>
+  <text x="800" y="840" font-size="19" font-weight="600" fill="#6CE9A6">AV = chargement autorisé</text>
+
+  <!-- Points forts -->
+  <g font-size="22" fill="#FFFFFF">
+    <g transform="translate(720,900)">
+      <text y="0" font-size="19" font-weight="700" fill="#B9CCE0" letter-spacing="2">EN PLUS</text>
+      <text y="42">• Agence en douane</text>
+      <text y="76">• Documents bloquants</text>
+      <text y="110">• Cockpit &amp; alertes</text>
+      <text y="144">• Excel / PDF</text>
+    </g>
+  </g>
+
+  <!-- Bandeau bas -->
+  <rect x="0" y="1150" width="1080" height="200" fill="#0E2A44" fill-opacity="0.6"/>
+  <g font-size="24" fill="#FFFFFF" font-weight="600">
+    <g transform="translate(70,1205)">
+      <rect width="210" height="54" rx="27" fill="#FFFFFF" fill-opacity="0.1" stroke="#FFFFFF" stroke-opacity="0.2"/>
+      <text x="105" y="35" text-anchor="middle">Multi-sites</text>
+    </g>
+    <g transform="translate(300,1205)">
+      <rect width="230" height="54" rx="27" fill="#FFFFFF" fill-opacity="0.1" stroke="#FFFFFF" stroke-opacity="0.2"/>
+      <text x="115" y="35" text-anchor="middle">Multi-devises</text>
+    </g>
+    <g transform="translate(550,1205)">
+      <rect width="210" height="54" rx="27" fill="#FFFFFF" fill-opacity="0.1" stroke="#FFFFFF" stroke-opacity="0.2"/>
+      <text x="105" y="35" text-anchor="middle">Traçabilité</text>
+    </g>
+    <g transform="translate(770,1205)">
+      <rect width="250" height="54" rx="27" fill="#FFFFFF" fill-opacity="0.1" stroke="#FFFFFF" stroke-opacity="0.2"/>
+      <text x="125" y="35" text-anchor="middle" font-size="22">Portail transitaire</text>
+    </g>
+  </g>
+  <text x="540" y="1310" font-size="18" fill="#8FB3D6" text-anchor="middle" letter-spacing="1">ETHAN LM · BELEJ-CONSULTING</text>
+</svg>
