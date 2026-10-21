@@ -1,0 +1,38 @@
+name: 🚀 Déploiement automatique ETHAN-LM
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to ETHAN-LM VPS
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.VPS_HOST_ETHAN_LM }}
+          username: ${{ secrets.VPS_USER_ETHAN_LM }}
+          key: ${{ secrets.VPS_SSH_KEY_ETHAN_LM }}
+
+          script: |
+            set -e
+
+            cd /var/www/vhosts/belej-erp.com/argenco-ethan-lm.belej-erp.com
+
+            echo "=== Fetching GitHub ==="
+            git fetch origin main
+
+            echo "=== Deploying ==="
+            git reset --hard origin/main
+
+            echo "=== Fixing permissions ==="
+            chown -R belej-erp.com_w1byz3rcb7a:psacln /var/www/vhosts/belej-erp.com/argenco-ethan-lm.belej-erp.com
+            chown belej-erp.com_w1byz3rcb7a:psaserv /var/www/vhosts/belej-erp.com/argenco-ethan-lm.belej-erp.com
+
+            echo "=== Current version ==="
+            git log -1 --oneline
+
+            echo "=== Deployment completed ==="
