@@ -1,0 +1,73 @@
+V2.0.a
+Page(s)
+Edité le : 18 Juin 2024 08H43:42
+ 1 sur 1
+MODELE IB
+Déclaration d'Importation des Biens
+Code type déclaration	IB
+Banque 	Rawbank
+Agence Banque RAWBANK - Lubumbashi
+N° Validation DEC1391544-BCEEBC8C2898-IB
+Sous-type déclaration	25
+Je soussigné COLINGO RDC SARL (CLT4215362)
+N°89 ROUTE KASAPA QUARTIER GAMBELA II COMMUNE LUBUMBASHI HAUT-KATANGA
+, LUBUMBASHI, KATANGA, Congo, The Democratic Republic of the
+Tel: 243895556667  -  colingordc@yahoo.com
+N° N.R.C. : CD/LSH/RCCM/20-B-00275  -  N° Impôt : A2031384L  -  N° Import/Export : 0002/BBX-20/I001497 HK/Z
+déclare réaliser l'importation des biens décrits ci-dessous et en être le donneur d'ordre
+Données	A remplir par le déclarant
+1) Poste douanier d'Entrée	KASUMBALESA WISKY
+2) Pays de provenance	China
+3) Nom du fournisseur Etranger	CHINA RAILWAY NO.8 ENGINEERING GROUP CO.,LTD
+    Détails du fournisseur	No.8,Jinke East Road,Jinniu District,Chengdu,Sichuan,China    
+N° de téléphone(s) TEL:15828617275
+E-Mail	E-MAIL:790729819@qq.com
+Fax 
+4) Monnaie de la transaction	USD - 
+5) Montant FOB total à payer / CIF total à payer	147555.56  / 164625.56
+11.1 Fret        16 890,00USD - 
+6) Frais connexes 11.2 Assurances	180.00USD - 
+11.3 Autres frais             0,00USD - 
+7) Modalité, délais et conditions de paiement 2-Transfert direct
+8) Nom du Bénéficiaire du paiement	CHINA RAILWAY NO.8 ENGINEERING GROUP CO.,LTD.
+    Contacts du Benéficiaire du paiement
+15828617275
+790729819@qq.com    
+9) Autres informations utiles
+10.1 Mode de transport Transport mode not specified
+10.2 Titre de transport n°
+N° Facture
+Date Facture
+20240605
+5 Juin 2024
+10.3 OCC: AV/ARA n°	Date extrême de validité9 Juin 2025 00h00
+10.4 Régime Douanier
+4-Mise à la consommation 
+définitive
+Date de validation 14 Juin 2024 00h00
+10.5 Autres
+A 	Le
+Signature du déclarant
+ 
+Signature et cachet de la banque agréée
+ 
+VALIDATION
+ 
+RAWBANK - Lubumbashi 
+Liste Des Produits (2)
+Tarif Douanier Désignation Pays d'Origine Quantité Unité stat. Prix Unit. Devise
+8704230001 Autres véhicules 
+automobiles pour le 
+transport de Mses, 
+uniquement à moteur à 
+piston à allumage par 
+compression (diesel
+China	1.000
+Unite(Piece)           52111.1111USD
+8429110000 Bouteurs (bulldozers) 
+et bouteurs biais 
+(angledozers)  
+autopropulsés à chenilles
+China	1.000
+Unite(Piece)           95444.4444USD
+Tiré le 18 Juin 2024	CATEGORIE :  LICENCE PREFINANCEECOD 2024 214576

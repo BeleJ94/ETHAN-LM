@@ -1,0 +1,43 @@
+/* ETHAN LM — documents A4 (PO fournisseur, bon de livraison). */
+@font-face { font-family: "IBM Plex Sans"; font-weight: 400; src: url("../fonts/IBMPlexSans-Regular.woff2") format("woff2"); }
+@font-face { font-family: "IBM Plex Sans"; font-weight: 600; src: url("../fonts/IBMPlexSans-SemiBold.woff2") format("woff2"); }
+:root { --accent: #1F4E79; --text: #1B2430; --muted: #5B6573; --border: #C4CAD2; }
+* { box-sizing: border-box; }
+body { margin: 0; background: #E9ECF0; font-family: "IBM Plex Sans", system-ui, sans-serif; font-size: 11pt; color: var(--text); }
+.print-toolbar { position: sticky; top: 0; display: flex; gap: 16px; align-items: center; padding: 10px 16px; background: #fff; border-bottom: 1px solid var(--border); font-size: 10pt; color: var(--muted); }
+.print-toolbar button { padding: 8px 16px; border: 0; border-radius: 6px; background: var(--accent); color: #fff; font: inherit; cursor: pointer; }
+.doc { width: 210mm; min-height: 297mm; margin: 16px auto; padding: 16mm 15mm; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,.12); }
+.doc__head { display: flex; justify-content: space-between; gap: 24px; border-bottom: 3px solid var(--accent); padding-bottom: 10px; margin-bottom: 16px; }
+.doc__company strong { font-size: 15pt; color: var(--accent); }
+.doc__company p, .doc__title p { margin: 2px 0; font-size: 9pt; color: var(--muted); }
+.doc__title { text-align: right; }
+.doc__title h1 { margin: 0; font-size: 18pt; color: var(--accent); letter-spacing: .02em; }
+.doc__title .ref { font-size: 13pt; font-weight: 600; }
+.boxes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+.box { border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; }
+.box h2 { margin: 0 0 4px; font-size: 8.5pt; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+.box p { margin: 1px 0; white-space: pre-line; }
+.box--accent { border: 2px solid var(--accent); background: #F3F6FA; }
+.meta { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 14px; font-size: 9.5pt; }
+.meta span { display: block; font-size: 8pt; color: var(--muted); text-transform: uppercase; }
+table { width: 100%; border-collapse: collapse; margin-bottom: 14px; }
+th { background: var(--accent); color: #fff; font-size: 8.5pt; text-transform: uppercase; text-align: left; padding: 6px 8px; }
+td { border-bottom: 1px solid var(--border); padding: 6px 8px; vertical-align: top; }
+.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.muted { color: var(--muted); font-size: 9pt; }
+tfoot td { font-weight: 600; border-bottom: 0; }
+.notes { font-size: 9.5pt; white-space: pre-line; border-left: 3px solid var(--accent); padding-left: 10px; margin-bottom: 18px; }
+.signatures { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 28px; }
+.signatures div { border-top: 1px solid var(--text); padding-top: 6px; min-height: 70px; font-size: 9pt; }
+.doc__foot { margin-top: 24px; font-size: 8pt; color: var(--muted); text-align: center; }
+@page { size: A4; margin: 0; }
+@media print {
+    body { background: #fff; }
+    .print-toolbar { display: none; }
+    .doc { margin: 0; box-shadow: none; width: auto; min-height: auto; }
+}
+
+/* Affiché dans l'aperçu en modale */
+.is-embedded .print-toolbar { display: none; }
+.is-embedded body { background: #E9ECF0; }
+.is-embedded .doc { margin: 12px auto; }

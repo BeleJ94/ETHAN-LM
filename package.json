@@ -1,0 +1,9 @@
+{
+  "name": "ethan-lm",
+  "private": true,
+  "description": "ETHAN LM — tests JS (node:test, sans dépendance)",
+  "scripts": {
+    "test": "node --test tests/js/tables.test.js"
+  },
+  "engines": { "node": ">=20" }
+}
