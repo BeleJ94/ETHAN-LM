@@ -252,6 +252,7 @@ return [
     'js.no_result' => 'No results',
     'js.searching' => 'Searching…',
     'js.error' => 'An error occurred.',
+    'js.error_http' => 'The server returned an unexpected response (HTTP error :status). Try again; if it persists, contact the administrator.',
     'js.export_rows' => ':n row(s)',
     'js.export_truncated' => 'Export limited to the first :n rows.',
     'js.export_generated' => 'Generated on :date',

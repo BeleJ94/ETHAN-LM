@@ -31,6 +31,10 @@ Session::start();
 I18n::setLocale((string) Session::get('locale', Env::get('APP_LOCALE', 'fr')));
 
 $request = Request::fromGlobals(rtrim((string) Env::get('APP_BASE_PATH', ''), '/'));
+// AJAX : toute sortie parasite (avertissement PHP affiché en mode debug…) corromprait le JSON ; elle est capturée puis journalisée.
+if ($request->isAjax()) {
+    ob_start();
+}
 $router = new Router();
 (require $root . '/app/routes.php')($router);
 
@@ -91,4 +95,10 @@ if ($request->isAjax() && $request->method !== 'GET' && $response->status === 30
     ], $error === null ? 200 : 422);
 }
 
+if ($request->isAjax()) {
+    $stray = (string) ob_get_clean();
+    if (trim($stray) !== '') {
+        @file_put_contents($root . '/storage/logs/app.log', '[' . date('c') . '] Sortie parasite sur ' . $request->method . ' ' . $request->path . ' : ' . mb_substr(strip_tags($stray), 0, 2000) . "\n", FILE_APPEND);
+    }
+}
 $response->send();

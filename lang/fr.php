@@ -252,6 +252,7 @@ return [
     'js.no_result' => 'Aucun résultat',
     'js.searching' => 'Recherche…',
     'js.error' => 'Une erreur est survenue.',
+    'js.error_http' => 'Le serveur a renvoyé une réponse inattendue (erreur HTTP :status). Réessayez ; si le problème persiste, contactez l’administrateur.',
     'js.export_rows' => ':n ligne(s)',
     'js.export_truncated' => 'Export limité aux :n premières lignes.',
     'js.export_generated' => 'Généré le :date',

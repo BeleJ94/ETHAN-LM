@@ -33,8 +33,10 @@ final class ActivityLogger
             return [$before, $after];
         }
         $b = $a = [];
+        // Valeurs composées (tableaux) comparées sous forme JSON : un cast (string) émettrait un avertissement.
+        $str = fn (mixed $v): string => is_scalar($v) || $v === null ? (string) $v : (string) json_encode($v);
         foreach ($after as $key => $value) {
-            if (array_key_exists($key, $before) && (string) $before[$key] !== (string) $value) {
+            if (array_key_exists($key, $before) && $str($before[$key]) !== $str($value)) {
                 $b[$key] = $before[$key];
                 $a[$key] = $value;
             }

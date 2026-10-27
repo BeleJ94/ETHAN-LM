@@ -231,7 +231,11 @@
                     const res = xhr.responseJSON || {};
                     if (xhr.status === 403 && res.error === 419) res.message = t('js.session_expired');
                     else if (xhr.status === 401) res.message = t('js.session_expired');
-                    else if (!res.message) res.message = xhr.status ? t('js.error') : t('js.network');
+                    else if (!res.message) {
+                        // Réponse illisible (pas du JSON) : on donne le code HTTP et on garde le détail dans la console.
+                        res.message = xhr.status ? t('js.error_http').replace(':status', xhr.status) : t('js.network');
+                        if (xhr.responseText) console.error('Réponse du serveur (HTTP ' + xhr.status + ') :', xhr.responseText.slice(0, 2000));
+                    }
                     reject(res);
                 });
         });

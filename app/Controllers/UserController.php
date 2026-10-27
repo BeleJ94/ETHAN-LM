@@ -116,8 +116,11 @@ final class UserController extends Controller
         ];
         Database::transaction(function () use ($repo, $data, $siteIds, $id, $before) {
             $newId = $repo->save($data, $siteIds, $id);
-            $logged = array_diff_key($data, ['password' => 1]) + ['site_ids' => implode(',', $siteIds)];
-            $old = $before ? array_intersect_key($before, $logged) + ['site_ids' => implode(',', $before['site_ids'])] : null;
+            // Mot de passe : seul le fait qu'il change est journalisé, jamais sa valeur.
+            $logged = array_diff_key($data, ['password' => 1]) + ['site_ids' => implode(',', $siteIds)]
+                + ($data['password'] !== null ? ['password' => $before ? 'changed' : 'set'] : []);
+            // site_ids « avant » en texte (et non le tableau de find()) : à placer en premier, « + » ne remplace pas une clé existante.
+            $old = $before ? ['site_ids' => implode(',', $before['site_ids']), 'password' => ''] + array_intersect_key($before, $logged) : null;
             ActivityLogger::log('user', $newId, $before ? 'update' : 'create', $old, $logged);
         });
         return $this->success('/users', $before ? 'flash.updated' : 'flash.created');

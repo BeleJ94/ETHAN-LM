@@ -22,7 +22,8 @@ final class Response
     public static function json(mixed $data, int $status = 200): self
     {
         return new self(
-            json_encode($data, JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR),
+            // Un octet non UTF-8 (saisie, fichier importé) est remplacé au lieu de faire échouer toute la réponse.
+            json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE | JSON_THROW_ON_ERROR),
             $status,
             ['Content-Type' => 'application/json; charset=utf-8']
         );
