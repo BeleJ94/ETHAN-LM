@@ -1651,4 +1651,13 @@ return [
     'company.error.logo_size' => 'Logo too large (:max KB maximum).',
     'company.error.logo_upload' => 'The logo could not be received. Try again.',
     'company.error.logo_type' => 'Logo format not accepted: PNG, JPEG or WebP.',
+    // Utilisateurs : messages d’erreur détaillés
+    'users.error.summary_update' => 'Could not save the changes to ":name": :n issue(s) to fix.',
+    'users.error.summary_create' => 'Could not create the user: :n issue(s) to fix.',
+    'users.error.password_short' => 'The password must be at least 10 characters long (currently :n).',
+    'users.error.password_mismatch' => 'The confirmation does not match the new password: type it again exactly.',
+    'users.error.confirm_without_password' => 'A confirmation was entered without a new password: clear it or enter the password.',
+    'users.error.email_taken' => 'The address :email is already used by the account ":name". Each user needs their own address.',
+    'users.error.self_demote' => 'You cannot remove the Administrator role from your own account. Ask another administrator to do it.',
+    'users.error.self_deactivate' => 'You cannot deactivate your own account: tick "Active".',
 ];

@@ -1651,4 +1651,13 @@ return [
     'company.error.logo_size' => 'Logo trop volumineux (:max Ko maximum).',
     'company.error.logo_upload' => 'Le logo n’a pas pu être reçu. Réessayez.',
     'company.error.logo_type' => 'Format de logo non accepté : PNG, JPEG ou WebP.',
+    // Utilisateurs : messages d’erreur détaillés
+    'users.error.summary_update' => 'Impossible d’enregistrer les modifications de « :name » : :n point(s) à corriger.',
+    'users.error.summary_create' => 'Impossible de créer l’utilisateur : :n point(s) à corriger.',
+    'users.error.password_short' => 'Le mot de passe doit contenir au moins 10 caractères (actuellement :n).',
+    'users.error.password_mismatch' => 'La confirmation ne correspond pas au nouveau mot de passe : ressaisissez-la à l’identique.',
+    'users.error.confirm_without_password' => 'Une confirmation est saisie sans nouveau mot de passe : videz ce champ ou saisissez le mot de passe.',
+    'users.error.email_taken' => 'L’adresse :email est déjà utilisée par le compte « :name ». Chaque utilisateur doit avoir sa propre adresse.',
+    'users.error.self_demote' => 'Vous ne pouvez pas retirer le rôle Administrateur à votre propre compte. Demandez à un autre administrateur de le faire.',
+    'users.error.self_deactivate' => 'Vous ne pouvez pas désactiver votre propre compte : cochez « Actif ».',
 ];

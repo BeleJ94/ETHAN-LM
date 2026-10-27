@@ -75,11 +75,12 @@ final class UserController extends Controller
             'role' => 'required|in:' . $roles,
             'password' => ($before ? '' : 'required|') . 'max:200',
         ]);
-        if (($input['password'] ?? '') !== '' && mb_strlen((string) $input['password']) < 10) {
-            $v->addError('password', t('validation.password_length'));
+        $password = (string) ($input['password'] ?? '');
+        if ($password !== '' && mb_strlen($password) < 10) {
+            $v->addError('password', t('users.error.password_short', ['n' => mb_strlen($password)]));
         }
-        if (($input['password'] ?? '') !== ($input['password_confirm'] ?? '')) {
-            $v->addError('password_confirm', t('validation.password_mismatch'));
+        if ($password !== ($input['password_confirm'] ?? '')) {
+            $v->addError('password_confirm', t($password === '' ? 'users.error.confirm_without_password' : 'users.error.password_mismatch'));
         }
         // Un compte transitaire est rattaché à son entreprise (fournisseur marqué « transitaire ») : c'est son périmètre.
         $forwarderId = self::nul($input['forwarder_id'] ?? null) !== null ? (int) $input['forwarder_id'] : null;
@@ -87,14 +88,21 @@ final class UserController extends Controller
             $v->addError('forwarder_id', t('users.forwarder_required'));
         }
         if (!isset($v->errors()['email']) && $repo->emailExists($input['email'], $id)) {
-            $v->addError('email', t('validation.unique'));
+            $stmt = Database::pdo()->prepare('SELECT name FROM users WHERE email = ? AND id <> ?');
+            $stmt->execute([$input['email'], $id ?? 0]);
+            $v->addError('email', t('users.error.email_taken', ['email' => $input['email'], 'name' => (string) $stmt->fetchColumn()]));
         }
         // Empêche l'administrateur de se retirer lui-même ses droits ou de se désactiver.
-        if ($id === $this->user()->id && (($input['role'] ?? '') !== 'admin' || !isset($input['active']))) {
-            $v->addError('role', t('users.self_lockout'));
+        if ($id === $this->user()->id) {
+            if (($input['role'] ?? '') !== 'admin') {
+                $v->addError('role', t('users.error.self_demote'));
+            }
+            if (!isset($input['active'])) {
+                $v->addError('active', t('users.error.self_deactivate'));
+            }
         }
         if ($v->fails()) {
-            return $this->backWithErrors($id ? "/users/$id/edit" : '/users/new', $v->errors(), $input);
+            return $this->backWithErrors($id ? "/users/$id/edit" : '/users/new', $v->errors(), $input, $this->summary($v->errors(), $before));
         }
 
         $siteIds = array_map('intval', (array) ($input['site_ids'] ?? []));
@@ -113,5 +121,25 @@ final class UserController extends Controller
             ActivityLogger::log('user', $newId, $before ? 'update' : 'create', $old, $logged);
         });
         return $this->success('/users', $before ? 'flash.updated' : 'flash.created');
+    }
+
+    /**
+     * Message d'ensemble : compte concerné, nombre de points à corriger, puis « Champ : problème » pour chacun.
+     * @param array<string,string> $errors
+     */
+    private function summary(array $errors, ?array $before): string
+    {
+        $labels = [
+            'name' => 'users.col.name', 'email' => 'auth.email', 'role' => 'users.col.role', 'forwarder_id' => 'users.forwarder',
+            'password' => 'auth.password', 'password_confirm' => 'users.password_confirm', 'active' => 'common.status',
+        ];
+        $lines = [];
+        foreach ($errors as $field => $message) {
+            $lines[] = (isset($labels[$field]) ? t($labels[$field]) . ' : ' : '') . $message;
+        }
+        $head = $before
+            ? t('users.error.summary_update', ['name' => $before['name'], 'n' => count($errors)])
+            : t('users.error.summary_create', ['n' => count($errors)]);
+        return $head . ' ' . implode(' · ', $lines);
     }
 }
