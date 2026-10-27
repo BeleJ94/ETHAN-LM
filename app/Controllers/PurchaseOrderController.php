@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
-use App\Core\Env;
 use App\Core\HttpException;
 use App\Core\Request;
 use App\Core\Response;
@@ -230,15 +229,10 @@ final class PurchaseOrderController extends Controller
         ], 'print');
     }
 
-    /** @return array<string,string> */
+    /** En-tête des documents imprimés (Paramètres → Société), logo en data URI. @return array<string,mixed> */
     public static function company(): array
     {
-        $out = [];
-        foreach (['name', 'address', 'city', 'phone', 'email', 'rccm', 'id_nat', 'nif'] as $k) {
-            $out[$k] = (string) Env::get('COMPANY_' . strtoupper($k), '');
-        }
-        $out['name'] = $out['name'] ?: 'ETHAN LM';
-        return $out;
+        return \App\Services\CompanySettings::get() + ['logo' => \App\Services\CompanySettings::logoDataUri()];
     }
 
     private function form(array $order, ?array $po, ?array $quote, array $poLines): Response

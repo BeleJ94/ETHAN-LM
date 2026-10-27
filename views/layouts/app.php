@@ -34,7 +34,11 @@ $isActive = fn (string $p) => $p === '/' ? $current === '/' : ($current === $p |
 <div class="app">
     <aside class="sidebar" id="sidebar" aria-label="<?= e(t('a11y.sidebar')) ?>">
         <div class="sidebar__brand">
-            <span class="brand-mark" aria-hidden="true">E</span>
+            <?php if (\App\Services\CompanySettings::get()['has_logo']): ?>
+                <span class="brand-mark brand-mark--logo" aria-hidden="true"><img src="<?= e(url('/company/logo')) ?>" alt=""></span>
+            <?php else: ?>
+                <span class="brand-mark" aria-hidden="true">E</span>
+            <?php endif ?>
             <span class="brand-name">ETHAN <strong>LM</strong></span>
             <button type="button" class="sidebar__mini-btn" data-sidebar-mini title="<?= e(t('nav.collapse')) ?>" aria-label="<?= e(t('nav.collapse')) ?>"><?= icon('panel-left-close') ?></button>
         </div>

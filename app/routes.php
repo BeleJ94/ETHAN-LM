@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Controllers\ActivityController;
 use App\Controllers\AttachmentController;
 use App\Controllers\AuthController;
+use App\Controllers\CompanyController;
 use App\Controllers\ContextController;
 use App\Controllers\CustomerController;
 use App\Controllers\DashboardController;
@@ -17,6 +18,7 @@ use App\Controllers\ImportController;
 use App\Controllers\InvoiceController;
 use App\Controllers\ItemController;
 use App\Controllers\LicenceImportController;
+use App\Controllers\MasterDataImportController;
 use App\Controllers\MovementController;
 use App\Controllers\OrderController;
 use App\Controllers\PortalController;
@@ -62,6 +64,17 @@ return static function (Router $r): void {
     $r->post('/sites', [SiteController::class, 'store']);
     $r->post('/sites/{id}', [SiteController::class, 'update']);
 
+    $r->get('/settings/company', [CompanyController::class, 'edit']);
+    $r->post('/settings/company', [CompanyController::class, 'update']);
+    $r->post('/settings/company/logo/delete', [CompanyController::class, 'deleteLogo']);
+    $r->get('/company/logo', [CompanyController::class, 'logo']);
+
+    $r->get('/settings/import',[MasterDataImportController::class, 'index']);
+    $r->post('/settings/import', [MasterDataImportController::class, 'upload']);
+    $r->post('/settings/import/confirm', [MasterDataImportController::class, 'confirm']);
+    $r->post('/settings/import/cancel', [MasterDataImportController::class, 'cancel']);
+    $r->get('/settings/import/template', [MasterDataImportController::class, 'template']);
+
     $r->get('/users', [UserController::class, 'index']);
     $r->get('/users/new', [UserController::class, 'create']);
     $r->post('/users', [UserController::class, 'store']);
@@ -103,6 +116,8 @@ return static function (Router $r): void {
         $r->get("$base/{id}/edit", [$ctrl, 'edit']);
         $r->post("$base/{id}", [$ctrl, 'update']);
     }
+    $r->get('/customers/{id}/delete', [CustomerController::class, 'confirmDelete']);
+    $r->post('/customers/{id}/delete', [CustomerController::class, 'destroy']);
     $r->post('/customers/{id}/sites', [CustomerController::class, 'saveSite']);
     $r->post('/customers/{id}/sites/{site_id}', [CustomerController::class, 'saveSite']);
 

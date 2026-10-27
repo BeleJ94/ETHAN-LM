@@ -1,16 +1,10 @@
 <?php
 /** @var array $po @var array $lines @var array $company — bon de commande fournisseur (A4). */
 $total = array_sum(array_map(fn ($l) => (float) $l['quantity'] * (float) $l['unit_price'], $lines));
-$legal = array_filter(['RCCM ' . $company['rccm'] => $company['rccm'], 'ID NAT ' . $company['id_nat'] => $company['id_nat'], 'NIF ' . $company['nif'] => $company['nif']]);
 ?>
 <article class="doc">
     <header class="doc__head">
-        <div class="doc__company">
-            <strong><?= e($company['name']) ?></strong>
-            <?php if ($company['address'] || $company['city']): ?><p><?= e(trim($company['address'] . ' ' . $company['city'])) ?></p><?php endif ?>
-            <?php if ($company['phone'] || $company['email']): ?><p><?= e(trim($company['phone'] . ' · ' . $company['email'], ' ·')) ?></p><?php endif ?>
-            <?php if ($legal): ?><p><?= e(implode(' · ', array_keys($legal))) ?></p><?php endif ?>
-        </div>
+        <?= \App\Core\View::partial('partials/doc_company', ['company' => $company]) ?>
         <div class="doc__title">
             <h1><?= e(t('print.po_title')) ?></h1>
             <p class="ref"><?= e($po['reference']) ?></p>

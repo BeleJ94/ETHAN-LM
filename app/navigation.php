@@ -38,6 +38,8 @@ return [
     ['id' => 'admin', 'section' => 'nav.section.admin', 'collapsible' => true, 'items' => [
         ['path' => '/sites', 'icon' => 'map-pin', 'label' => 'nav.sites', 'perm' => 'sites.manage'],
         ['path' => '/users', 'icon' => 'users', 'label' => 'nav.users', 'perm' => 'users.manage'],
-        ['path' => '/activity', 'icon' => 'history', 'label' => 'nav.activity', 'perm' => 'activity.view'],
+        ['path' => '/settings/company', 'icon' => 'building', 'label' => 'nav.company', 'perm' => 'settings.company'],
+        ['path' => '/settings/import','icon' => 'file-spreadsheet', 'label' => 'nav.masterdata_import', 'perm' => 'settings.import'],
+        ['path' => '/activity','icon' => 'history', 'label' => 'nav.activity', 'perm' => 'activity.view'],
     ]],
 ];

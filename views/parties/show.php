@@ -29,6 +29,9 @@ $id = (int) $p['id'];
         <?php if ($user->can('parties.manage')): ?>
             <a class="btn" href="<?= e(url("$base/$id/edit")) ?>"><?= icon('pencil') ?> <?= e(t('common.edit')) ?></a>
         <?php endif ?>
+        <?php if ($type === 'customer' && $user->can('parties.delete')): ?>
+            <a class="btn btn--danger" href="<?= e(url("/customers/$id/delete")) ?>"><?= icon('trash-2') ?> <?= e(t('common.delete')) ?></a>
+        <?php endif ?>
     </div>
 </section>
 

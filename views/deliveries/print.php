@@ -1,11 +1,7 @@
 <?php /** @var array $d @var array $company — bon de livraison (A4), signé par le réceptionnaire client. */ ?>
 <article class="doc">
     <header class="doc__head">
-        <div class="doc__company">
-            <strong><?= e($company['name']) ?></strong>
-            <?php if ($company['address'] || $company['city']): ?><p><?= e(trim($company['address'] . ' ' . $company['city'])) ?></p><?php endif ?>
-            <?php if ($company['phone']): ?><p><?= e($company['phone']) ?></p><?php endif ?>
-        </div>
+        <?= \App\Core\View::partial('partials/doc_company', ['company' => $company]) ?>
         <div class="doc__title">
             <h1><?= e(t('print.dn_title')) ?></h1>
             <p class="ref"><?= e($d['reference']) ?></p>

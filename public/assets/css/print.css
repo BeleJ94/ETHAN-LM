@@ -8,7 +8,10 @@ body { margin: 0; background: #E9ECF0; font-family: "IBM Plex Sans", system-ui, 
 .print-toolbar button { padding: 8px 16px; border: 0; border-radius: 6px; background: var(--accent); color: #fff; font: inherit; cursor: pointer; }
 .doc { width: 210mm; min-height: 297mm; margin: 16px auto; padding: 16mm 15mm; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,.12); }
 .doc__head { display: flex; justify-content: space-between; gap: 24px; border-bottom: 3px solid var(--accent); padding-bottom: 10px; margin-bottom: 16px; }
+.doc__company { display: flex; gap: 12px; align-items: flex-start; }
+.doc__logo { max-height: 22mm; max-width: 45mm; object-fit: contain; }
 .doc__company strong { font-size: 15pt; color: var(--accent); }
+.doc__legal-form { font-size: 9pt; color: var(--muted); }
 .doc__company p, .doc__title p { margin: 2px 0; font-size: 9pt; color: var(--muted); }
 .doc__title { text-align: right; }
 .doc__title h1 { margin: 0; font-size: 18pt; color: var(--accent); letter-spacing: .02em; }

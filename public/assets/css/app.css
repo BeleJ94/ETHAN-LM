@@ -1262,10 +1262,14 @@ a.tile__value:hover, a.tile__head:hover { text-decoration: none; color: var(--ac
 .nav__badge[data-drill]:focus-visible { outline: none; box-shadow: 0 0 0 2px #fff; }
 
 /* ---------- Connexion : présentation du logiciel + carte de connexion ---------- */
-.layout-minimal { background: var(--bg); }
-.minimal { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); }
-.minimal__visual { position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; padding: 48px 56px;
-    background: radial-gradient(1200px 600px at 10% -10%, #2C6AA0 0%, transparent 60%), radial-gradient(900px 500px at 110% 110%, #0E2A44 0%, transparent 55%), linear-gradient(155deg, #1F4E79 0%, #12324F 100%); }
+/* Illustration du site minier (livraison en approche) sur toute la page, sous un voile bleu dégressif :
+   dense derrière la présentation (lisibilité), léger à droite où l'image reste visible autour de la carte. */
+.layout-minimal { background: #12324F url("../img/login-mine.svg") center bottom / cover no-repeat fixed; }
+.minimal { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    background: linear-gradient(90deg, rgba(11,34,56,.94) 0%, rgba(14,42,68,.86) 38%, rgba(14,42,68,.45) 62%, rgba(11,34,56,.18) 100%); }
+.minimal__visual { position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; padding: 48px 56px; background: transparent; }
+.minimal__panel .login-card { box-shadow: 0 1px 2px rgba(16,24,40,.08), 0 24px 60px rgba(5,15,30,.45); }
+.minimal__panel .minimal__foot { color: rgba(255,255,255,.85); text-shadow: 0 1px 3px rgba(0,0,0,.5); }
 .lv__bg { position: absolute; inset: 0; pointer-events: none; opacity: .5;
     background-image: linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
     background-size: 36px 36px; mask-image: radial-gradient(ellipse at 30% 40%, #000 30%, transparent 75%); -webkit-mask-image: radial-gradient(ellipse at 30% 40%, #000 30%, transparent 75%); }
@@ -1324,3 +1328,10 @@ a.tile__value:hover, a.tile__head:hover { text-decoration: none; color: var(--ac
 }
 .login .input-lead input, .login .input-lead input[type="email"], .login .input-lead input[type="password"], .login .input-lead input[type="text"] { padding-left: 40px; }
 .login .input-icon .icon-btn { background: transparent; }
+
+/* Paramètres → Société : logo */
+.company-logo { display: flex; gap: var(--space-5); align-items: center; flex-wrap: wrap; }
+.company-logo__preview { display: grid; place-items: center; width: 200px; height: 110px; padding: var(--space-3); border: 1px dashed var(--border-strong); border-radius: var(--radius); background: var(--surface-alt); }
+.company-logo__preview img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.brand-mark--logo { padding: 3px; overflow: hidden; }
+.brand-mark--logo img { width: 100%; height: 100%; object-fit: contain; }
