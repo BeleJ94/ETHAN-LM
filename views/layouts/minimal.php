@@ -36,7 +36,7 @@ $features = [
         <div class="lv__bg" aria-hidden="true"></div>
         <div class="lv">
             <header class="lv__brand">
-                <span class="brand-mark brand-mark--lg">E</span>
+                <span class="brand-mark brand-mark--lg brand-mark--logo"><img src="<?= e(asset('img/logo.svg')) ?>" alt=""></span>
                 <span><strong>ETHAN LM</strong><small><?= e(t('login.product')) ?></small></span>
             </header>
 

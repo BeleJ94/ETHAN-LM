@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Guide d'encodage des référentiels — ETHAN LM</title>
+<style>
+  :root { --navy: #1F4E79; --navy-soft: #E8EEF4; --orange: #B54708; --orange-soft: #FCEFE3; --green: #1E7A4C; --green-soft: #E7F3EC;
+          --red: #B42318; --red-soft: #FBEAE8; --text: #1B2430; --muted: #5B6573; --border: #DDE1E6; --bg: #F5F6F8; }
+  @page { size: A4; margin: 14mm 13mm 16mm; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Segoe UI", "IBM Plex Sans", Arial, sans-serif; color: var(--text); font-size: 9.5pt; line-height: 1.4; }
+  h1, h2, h3 { line-height: 1.25; margin: 0; }
+  h2 { font-size: 15pt; color: var(--navy); margin: 6mm 0 3mm; padding-bottom: 1.5mm; border-bottom: 2px solid var(--navy); break-after: avoid; }
+  h2 .n { display: inline-grid; place-items: center; width: 8mm; height: 8mm; border-radius: 50%; background: var(--navy); color: #fff; font-size: 10.5pt; margin-right: 2mm; vertical-align: 1px; }
+  h3 { font-size: 11pt; margin: 4mm 0 2mm; }
+  p { margin: 0 0 2.5mm; }
+  .page { page-break-after: always; }
+  .muted { color: var(--muted); }
+  code { font-family: Consolas, monospace; font-size: 8.5pt; background: var(--bg); padding: .2mm 1.2mm; border-radius: 1mm; }
+
+  .cover { height: 265mm; display: flex; flex-direction: column; justify-content: space-between; padding: 6mm 2mm; }
+  .brand { display: flex; align-items: center; gap: 4mm; }
+  .brand__mark { width: 14mm; height: 14mm; border-radius: 3mm; background: var(--navy); color: #fff; display: grid; place-items: center; font-size: 20pt; font-weight: 700; }
+  .brand strong { display: block; font-size: 15pt; }
+  .brand small { display: block; letter-spacing: .15em; font-size: 8pt; color: var(--muted); }
+  .cover__band { height: 3mm; width: 40mm; background: var(--navy); border-radius: 2mm; margin-bottom: 8mm; }
+  .cover__title { font-size: 30pt; font-weight: 700; margin: 0 0 4mm; }
+  .cover__sub { font-size: 13pt; color: var(--muted); max-width: 155mm; }
+  .cover__meta { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; font-size: 9.5pt; }
+  .cover__meta div { border-top: 1px solid var(--border); padding-top: 3mm; }
+  .cover__meta b { display: block; color: var(--muted); font-weight: 600; font-size: 8pt; letter-spacing: .08em; text-transform: uppercase; }
+
+  .box { border: 1px solid var(--border); border-left: 4px solid var(--navy); border-radius: 2mm; padding: 2.5mm 4mm; margin: 2.5mm 0; break-inside: avoid; }
+  .box--ok { border-left-color: var(--green); background: var(--green-soft); border-color: #B7E0C8; }
+  .box--warn { border-left-color: var(--red); background: var(--red-soft); border-color: #F4C7C2; }
+  .box--tip { border-left-color: var(--orange); background: var(--orange-soft); border-color: #F3C9A1; }
+  .box b.title { display: block; margin-bottom: 1mm; }
+  .box ul, ol { margin: 1mm 0 0; padding-left: 5mm; }
+  li { margin: .4mm 0; }
+
+  table { width: 100%; border-collapse: collapse; margin: 1.5mm 0 2.5mm; font-size: 8.8pt; break-inside: auto; }
+  th { background: var(--navy); color: #fff; text-align: left; font-weight: 600; padding: 1.6mm 2mm; }
+  td { border-bottom: 1px solid var(--border); padding: 1.5mm 2mm; vertical-align: top; }
+  tr { break-inside: avoid; }
+  tbody tr:nth-child(even) td { background: #FAFBFC; }
+  td:first-child { font-weight: 600; white-space: nowrap; }
+  .req { display: inline-block; font-size: 7.5pt; font-weight: 700; padding: .2mm 1.8mm; border-radius: 2mm; background: var(--red-soft); color: var(--red); }
+  .opt { display: inline-block; font-size: 7.5pt; font-weight: 600; padding: .2mm 1.8mm; border-radius: 2mm; background: var(--navy-soft); color: var(--navy); }
+  .ex { font-family: Consolas, monospace; font-size: 8.3pt; color: var(--muted); }
+  .section { break-inside: auto; }
+  .legend { display: flex; gap: 6mm; flex-wrap: wrap; font-size: 9pt; margin: 2mm 0; }
+  .swatch { display: inline-block; width: 10mm; height: 4mm; border: 1px solid #999; vertical-align: -1px; margin-right: 1.5mm; }
+  .order { columns: 2; column-gap: 8mm; padding-left: 6mm; }
+  .where { display: flex; gap: 2.5mm; align-items: baseline; flex-wrap: wrap; margin: 0 0 2.5mm; padding: 2mm 3mm; border: 1px solid #C6D5E4; border-radius: 2mm; background: var(--navy-soft); font-size: 9pt; break-inside: avoid; }
+  .where b { color: var(--navy); white-space: nowrap; }
+  .path { font-weight: 600; }
+  .path i { font-style: normal; color: var(--muted); margin: 0 1mm; }
+  .btnx { display: inline-block; font-size: 8pt; font-weight: 600; padding: .2mm 2mm; border-radius: 1.5mm; background: var(--navy); color: #fff; white-space: nowrap; }
+  .nomenu { color: var(--orange); font-weight: 600; }
+  .map { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; margin: 2mm 0 3mm; }
+  .menu { border: 1px solid var(--border); border-radius: 2.5mm; overflow: hidden; break-inside: avoid; }
+  .menu__h { background: #12324F; color: #fff; padding: 1.8mm 3mm; font-weight: 600; font-size: 9.5pt; }
+  .menu__h small { font-weight: 400; opacity: .75; }
+  .menu ul { list-style: none; margin: 0; padding: 1mm 0; }
+  .menu li { display: flex; justify-content: space-between; gap: 3mm; padding: 1.2mm 3mm; border-bottom: 1px dashed var(--border); margin: 0; }
+  .menu li:last-child { border-bottom: 0; }
+  .menu li span { color: var(--muted); font-size: 8.5pt; text-align: right; }
+  .brand__mark--logo, .mark--logo { background: transparent !important; padding: 0; }
+  .brand__mark--logo svg, .mark--logo svg { display: block; }
+</style>
+</head>
+<body>
+
+<section class="page cover">
+  <div class="brand">
+    <span class="brand__mark brand__mark--logo"><svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <path d="M10 44.5 L31 39.5 L54 43.5 L29 49.5Z" fill="#5E6165"/>
+  <path d="M10 44.5 L29 49.5 L27 61 L2 54.5Z" fill="#4A4D51"/>
+  <path d="M29 49.5 L54 43.5 L62 53.5 L27 61Z" fill="#2F3134"/>
+  <path d="M19 28.5 L31.5 25.5 L44.5 28 L29.5 32Z" fill="#F08C00"/>
+  <path d="M19 28.5 L29.5 32 L28 46 L10.5 41Z" fill="#FFC21A"/>
+  <path d="M29.5 32 L44.5 28 L53 39.5 L28 46Z" fill="#FF9A1F"/>
+  <path d="M32 3 L20.5 24 L30.5 27.5Z" fill="#3BD94A"/>
+  <path d="M32 3 L30.5 27.5 L43.5 23.5Z" fill="#26B536"/>
+</svg></span>
+    <span><strong>ETHAN LM</strong><small>LOGISTICS MANAGEMENT</small></span>
+  </div>
+  <div>
+    <div class="cover__band"></div>
+    <h1 class="cover__title">Guide d'encodage des référentiels</h1>
+    <p class="cover__sub">Comment remplir la fiche de collecte <b>Referentiels-ETHAN-LM.xlsx</b> onglet par onglet, puis l'importer dans le logiciel : société, sites, entrepôts, devises, articles, clients, fournisseurs, banques et règles documentaires.</p>
+  </div>
+  <div class="cover__meta">
+    <div><b>Public</b>Personne chargée de collecter les données avant la mise en service</div>
+    <div><b>Fichier</b>Referentiels-ETHAN-LM.xlsx (17 onglets)</div>
+    <div><b>Import</b>Administration → Import des référentiels</div>
+  </div>
+</section>
+
+<section class="page">
+  <h2>Avant de commencer</h2>
+  <h3>Les codes couleur de la fiche</h3>
+  <div class="legend">
+    <span><span class="swatch" style="background:#FFF2CC"></span>Cellules jaunes : zones à remplir</span>
+    <span><span class="swatch" style="background:#C00000"></span>En-tête rouge (*) : colonne obligatoire</span>
+    <span><span class="swatch" style="background:#1F4E79"></span>En-tête bleu : colonne facultative</span>
+    <span><span class="swatch" style="background:#E7E6E6"></span>Ligne grise en italique : exemple</span>
+  </div>
+
+  <h3>Règles générales</h3>
+  <ul>
+    <li><b>Une ligne par élément</b>, à partir de la ligne qui suit l'exemple, <b>sans ligne vide au milieu</b>.</li>
+    <li><b>Ne modifiez ni ne supprimez la ligne d'exemple</b> (grise) : elle est ignorée à l'import.</li>
+    <li><b>Ne renommez pas les onglets</b> et ne changez pas l'ordre des colonnes : l'import les reconnaît par leur numéro (« 2. Sites », « 3. Entrepôts »…).</li>
+    <li><b>Les codes laissés vides sont générés automatiquement</b> (<code>SITE-01</code>, <code>CLI-0001</code>, <code>FRS-0001</code>, <code>REA-0001</code>…). Ne les inventez que si vous avez déjà une codification interne.</li>
+    <li><b>Les liens entre onglets se font par le nom (ou le code), écrit à l'identique</b> : un entrepôt cite le nom exact de son site, un article le code de sa famille, un lieu de livraison le nom exact de son client.</li>
+    <li><b>Listes déroulantes</b> (devises, couleurs, Oui/Non, Fourni par, Niveau, Mode, Transport, Blocage) : choisissez toujours une valeur de la liste, ne tapez pas de texte libre.</li>
+    <li><b>Dates</b> au format <code>JJ/MM/AAAA</code> ; <b>nombres</b> sans unité ni symbole monétaire (la virgule ou le point décimal sont acceptés).</li>
+    <li><b>Adresses e-mail</b> : une seule adresse valide par cellule.</li>
+  </ul>
+
+  <h3>Ordre de remplissage conseillé</h3>
+  <p class="muted">Les onglets dépendent les uns des autres : remplissez-les dans l'ordre du classeur.</p>
+  <ol class="order">
+    <li>Société</li><li>Sites</li><li>Entrepôts (→ sites)</li><li>Devises &amp; taux</li><li>Unités</li><li>Familles d'articles</li>
+    <li>Catégories</li><li>Articles (→ familles, unités, catégories, entrepôts, devises)</li><li>Clients</li><li>Lieux de livraison (→ clients)</li>
+    <li>Fournisseurs</li><li>Agences en douane</li><li>Banques</li><li>Agences bancaires (→ banques)</li><li>Types de documents</li><li>Règles documentaires (→ types, familles)</li>
+  </ol>
+
+  <div class="box box--tip"><b class="title">Les listes de référence (onglet « Listes »)</b>
+    Cet onglet alimente les listes déroulantes. N'y touchez pas. Valeurs disponibles :
+    <ul>
+      <li><b>Devises</b> : USD, EUR, CDF, CNY, ZAR, AED (+ celles ajoutées dans l'onglet 4)</li>
+      <li><b>Couleurs</b> : blue, green, orange, red, purple, teal (gray par défaut)</li>
+      <li><b>Fourni par</b> : Fournisseur · Transitaire / agence en douane · Douane · Client · Interne</li>
+      <li><b>Niveau</b> : Dossier (une fois par commande) · Expédition (à chaque livraison)</li>
+      <li><b>Mode d'exécution</b> : Tous · Achat local · Importation · Vente sur stock</li>
+      <li><b>Transport</b> : Tous · Route · Rail · Mer · Air · Multimodal</li>
+      <li><b>Bloque à l'étape</b> : Aucun · Départ · Réception · Facturation · Clôture</li>
+    </ul>
+  </div>
+</section>
+
+<section class="page">
+  <h2>Se repérer dans le logiciel</h2>
+  <p>Le menu se trouve dans la <b>barre latérale gauche</b>. Les sections <b>Référentiels</b> et <b>Administration</b> sont <b>repliables</b> : cliquez sur leur titre pour les ouvrir. Une entrée n’apparaît que si votre rôle y donne accès (Administration : administrateur uniquement).</p>
+  <div class="map">
+    <div class="menu"><div class="menu__h">Stock</div><ul>
+      <li>Articles <span>onglet 8 · catégories (7) et unités (5) au choix</span></li>
+      <li>Mouvements <span>stock de départ complémentaire</span></li>
+      <li>Entrepôts <span>onglet 3</span></li></ul></div>
+    <div class="menu"><div class="menu__h">Référentiels <small>— repliable</small></div><ul>
+      <li>Clients <span>onglet 9 · lieux de livraison (10) dans la fiche</span></li>
+      <li>Fournisseurs <span>onglet 11</span></li>
+      <li>Familles d’articles <span>onglet 6</span></li>
+      <li>Banques <span>onglet 13 · agences (14) dans la fiche</span></li>
+      <li>Agences en douane <span>onglet 12</span></li>
+      <li>Documents d’expédition <span>onglets 15 et 16</span></li></ul></div>
+    <div class="menu"><div class="menu__h">Administration <small>— repliable, administrateur</small></div><ul>
+      <li>Sites <span>onglet 2</span></li>
+      <li>Utilisateurs <span>comptes, rôles, sites autorisés</span></li>
+      <li>Société <span>onglet 1 + logo</span></li>
+      <li>Import des référentiels <span>tout le classeur (dont 4, 5, 7)</span></li>
+      <li>Journal d’activité <span>trace de chaque import et modification</span></li></ul></div>
+    <div class="menu"><div class="menu__h">Sans écran dédié</div><ul>
+      <li>Devises &amp; taux <span>onglet 4 → import</span></li>
+      <li>Unités <span>onglet 5 → import</span></li>
+      <li>Catégories <span>onglet 7 → import, choix dans la fiche article</span></li></ul></div>
+  </div>
+  <div class="box box--tip"><b class="title">Deux façons d’encoder</b>
+    <ul>
+      <li><b>En masse</b> (mise en service, grandes listes) : remplir la fiche Excel puis <b>Administration › Import des référentiels</b>.</li>
+      <li><b>Au fil de l’eau</b> (un nouveau client, un article de plus) : directement dans l’écran indiqué par l’encadré <b>📍 Où le trouver</b> de chaque chapitre.</li>
+    </ul></div>
+  <div class="box"><b class="title">Repères d’écran</b>Sur chaque liste, le bouton bleu <span class="btnx">+ Nouveau…</span> est en haut à droite ; le <b>crayon</b> d’une ligne ouvre la modification ; le nom d’un client ou d’une banque ouvre sa <b>fiche</b>, où se gèrent ses lieux de livraison ou ses agences.</div>
+</section>
+<section class="section">
+  <h2><span class="n">1</span>Informations sur la société</h2>
+  <div class="where"><b>📍 Où le trouver :</b> <span><span class="path">Administration<i>›</i>Société</span> — formulaire unique ; logo dans la rubrique « Logo », puis <span class="btnx">Enregistrer</span>. Réservé à l’administrateur.</span></div>
+  <p>Coordonnées imprimées en en-tête des PO fournisseurs et des bons de livraison. <b>Une seule ligne.</b></p>
+  <table>
+    <thead><tr><th>Colonne</th><th>Statut</th><th>Contenu attendu</th><th>Exemple</th></tr></thead>
+    <tbody>
+      <tr><td>Raison sociale</td><td><span class="req">Obligatoire</span></td><td>Nom officiel complet</td><td class="ex">ETHAN SARL</td></tr>
+      <tr><td>Adresse</td><td><span class="opt">Facultatif</span></td><td>N°, avenue, quartier</td><td class="ex">123, av. Lumumba, Q. Golf</td></tr>
+      <tr><td>Ville / pays</td><td><span class="opt">Facultatif</span></td><td>Ville et pays</td><td class="ex">Lubumbashi, RDC</td></tr>
+      <tr><td>Téléphone</td><td><span class="opt">Facultatif</span></td><td>Format international</td><td class="ex">+243 990 000 000</td></tr>
+      <tr><td>E-mail</td><td><span class="opt">Facultatif</span></td><td>Adresse générale de la société</td><td class="ex">contact@ethan.cd</td></tr>
+      <tr><td>RCCM</td><td><span class="opt">Facultatif</span></td><td>N° du Registre du commerce</td><td class="ex">CD/LSH/RCCM/20-B-0000</td></tr>
+      <tr><td>Id. Nat.</td><td><span class="opt">Facultatif</span></td><td>Identification nationale</td><td class="ex">05-H4901-N00000X</td></tr>
+      <tr><td>NIF</td><td><span class="opt">Facultatif</span></td><td>N° d'impôt</td><td class="ex">A0000000X</td></tr>
+      <tr><td>Devise de base</td><td><span class="req">Obligatoire</span></td><td>Devise de valorisation du stock (liste)</td><td class="ex">USD</td></tr>
+    </tbody>
+  </table>
+  <div class="box"><b class="title">À compléter dans le logiciel</b>Le <b>logo</b>, la forme juridique, le capital social, le n° TVA, le n° importateur et le site web se saisissent ensuite dans <b>Administration → Société</b>. La devise de base est fixée à l'installation : signalez-la avant la mise en service, elle ne se change pas en cours d'exploitation.</div>
+
+  <h2><span class="n">2</span>Les différents sites de la société</h2>
+  <div class="where"><b>📍 Où le trouver :</b> <span><span class="path">Administration<i>›</i>Sites</span> — bouton <span class="btnx">+ Nouveau site</span>, crayon pour modifier. Rattacher les utilisateurs : <span class="path">Administration<i>›</i>Utilisateurs</span> › fiche › « Sites autorisés ».</span></div>
+  <p>Établissements ou agences. Chaque utilisateur est ensuite rattaché à un ou plusieurs sites et ne voit que leurs données.</p>
+  <table>
+    <thead><tr><th>Colonne</th><th>Statut</th><th>Contenu attendu</th><th>Exemple</th></tr></thead>
+    <tbody>
+      <tr><td>Code</td><td><span class="opt">Facultatif</span></td><td>Vide = automatique (<code>SITE-01</code>…)</td><td class="ex">SITE-01</td></tr>
+      <tr><td>Nom du site</td><td><span class="req">Obligatoire</span></td><td>Nom unique, repris tel quel dans l'onglet 3</td><td class="ex">Siège Lubumbashi</td></tr>
+      <tr><td>Ville</td><td><span class="opt">Facultatif</span></td><td></td><td class="ex">Lubumbashi</td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="n">3</span>Les entrepôts</h2>
+  <div class="where"><b>📍 Où le trouver :</b> <span><span class="path">Stock<i>›</i>Entrepôts</span> — bouton <span class="btnx">+ Nouvel entrepôt</span> (visible dès qu’un site existe).</span></div>
+  <p>Lieux de stockage physiques. Chaque entrepôt appartient à un site.</p>
+  <table>
+    <thead><tr><th>Colonne</th><th>Statut</th><th>Contenu attendu</th><th>Exemple</th></tr></thead>
+    <tbody>
+      <tr><td>Code</td><td><span class="opt">Facultatif</span></td><td>Vide = code du site + n° (<code>SITE-01-01</code>)</td><td class="ex"></td></tr>
+      <tr><td>Nom de l'entrepôt</td><td><span class="req">Obligatoire</span></td><td>Repris tel quel dans l'onglet 8 (stock initial)</td><td class="ex">Dépôt principal Kalukuluku</td></tr>
+      <tr><td>Site de rattachement</td><td><span class="req">Obligatoire</span></td><td><b>Nom exact</b> (ou code) d'un site de l'onglet 2</td><td class="ex">Siège Lubumbashi</td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="n">4</span>Devises &amp; taux</h2>
+  <div class="where"><b>📍 Où le trouver :</b> <span><span class="nomenu">Pas d’écran de gestion</span> — devises et taux de départ se chargent par <span class="path">Administration<i>›</i>Import des référentiels</span>. Le taux d’une opération reste modifiable dans son formulaire (ex. <span class="path">Stock<i>›</i>Mouvements</span> › entrée en devise).</span></div>
+  <p>USD, EUR, CDF, CNY, ZAR et AED existent déjà. Ajoutez les devises manquantes et indiquez le <b>taux de départ</b> de chaque devise utilisée.</p>
+  <table>
+    <thead><tr><th>Colonne</th><th>Statut</th><th>Contenu attendu</th><th>Exemple</th></tr></thead>
+    <tbody>
+      <tr><td>Code ISO</td><td><span class="req">Obligatoire</span></td><td>3 lettres majuscules</td><td class="ex">EUR</td></tr>
+      <tr><td>Libellé</td><td><span class="req">Obligatoire</span></td><td>Nom de la devise</td><td class="ex">Euro</td></tr>
+      <tr><td>Taux</td><td><span class="opt">Facultatif</span></td><td><b>1 unité de cette devise = ? devise de base</b>. Nombre &gt; 0</td><td class="ex">1.08</td></tr>
+      <tr><td>Valable à partir du</td><td><span class="opt">Facultatif</span></td><td>JJ/MM/AAAA ; vide = date de l'import</td><td class="ex">01/01/2026</td></tr>
+    </tbody>
+  </table>
+  <div class="box box--warn"><b class="title">Sens du taux</b>Avec l'USD en devise de base : 1 EUR = <b>1,08</b> USD ; 1 CDF = <b>0,00035</b> USD (et non 2 850). Un taux inversé fausse tous les coûts de revient. Ne mettez pas de taux pour la devise de base.</div>
+
+  <h2><span class="n">5</span>Unités</h2>
+  <div class="where"><b>📍 Où le trouver :</b> <span><span class="nomenu">Pas d’écran de gestion</span> — unités ajoutées par <span class="path">Administration<i>›</i>Import des référentiels</span> ; elles apparaissent ensuite dans la liste « Unité » de la fiche article.</span></div>
+  <p>PCE, KG, T, L, M, M3, CTN, PAL et SAC existent déjà. <b>N'ajoutez que celles qui manquent.</b></p>
+  <table>
+    <thead><tr><th>Colonne</th><th>Statut</th><th>Contenu attendu</th><th>Exemple</th></tr></thead>
+    <tbody>
+      <tr><td>Code</td><td><span class="req">Obligatoire</span></td><td>10 caractères max., majuscules</td><td class="ex">FUT</td></tr>
+      <tr><td>Libellé</td><td><span class="req">Obligatoire</span></td><td>Description de l'unité</td><td class="ex">Fût de 200 L</td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="n">6</span>Familles des articles</h2>
+  <div class="where"><b>📍 Où le trouver :</b> <span><span class="path">Référentiels<i>›</i>Familles d’articles</span> — bouton <span class="btnx">+ Nouvelle famille</span>. Une famille utilisée ne se supprime pas : on la désactive.</span></div>
+  <p>Regroupement principal des produits. Le code de famille sert de préfixe au code article (<code>REA-0001</code>) et aux règles documentaires. Existent déjà : <b>REA</b> Réactifs, <b>CAR</b> Carburants, <b>AUT</b> Autres.</p>
+  <table>
+    <thead><tr><th>Colonne</th><th>Statut</th><th>Contenu attendu</th><th>Exemple</th></tr></thead>
+    <tbody>
+      <tr><td>Code</td><td><span class="req">Obligatoire</span></td><td>Court (3 lettres conseillées), unique</td><td class="ex">EXP</td></tr>
+      <tr><td>Nom</td><td><span class="req">Obligatoire</span></td><td>Unique</td><td class="ex">Explosifs</td></tr>
+      <tr><td>Description</td><td><span class="opt">Facultatif</span></td><td></td><td class="ex">Émulsions, détonateurs…</td></tr>
+      <tr><td>Couleur</td><td><span class="opt">Facultatif</span></td><td>Liste ; vide = gris</td><td class="ex">red</td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="n">7</span>Catégories</h2>
+  <div class="where"><b>📍 Où le trouver :</b> <span><span class="nomenu">Pas d’écran de gestion</span> — créées par l’import ; on les choisit dans la liste « Catégorie » de la fiche article (<span class="path">Stock<i>›</i>Articles</span>).</span></div>
+  <p>Classement libre complémentaire des articles (facultatif). Une catégorie citée dans l'onglet 8 mais absente ici est créée automatiquement.</p>
+  <table>
+    <thead><tr><th>Colonne</th><th>Statut</th><th>Contenu attendu</th><th>Exemple</th></tr></thead>
+    <tbody><tr><td>Nom de la catégorie</td><td><span class="req">Obligatoire</span></td><td>Unique</td><td class="ex">Acides</td></tr></tbody>
+  </table>
+
+  <h2><span class="n">8</span>Articles</h2>
+  <div class="where"><b>📍 Où le trouver :</b> <span><span class="path">Stock<i>›</i>Articles</span> — bouton <span class="btnx">+ Nouvel article</span>. Stock de départ ajouté après coup : <span class="path">Stock<i>›</i>Mouvements</span> › nouvelle entrée.</span></div>
+  <p>Catalogue des produits achetés, vendus ou stockés, avec leur stock de départ éventuel.</p>
+  <table>
+    <thead><tr><th>Colonne</th><th>Statut</th><th>Contenu attendu</th><th>Exemple</th></tr></thead>
+    <tbody>
+      <tr><td>Code article</td><td><span class="opt">Facultatif</span></td><td>Vide = code famille + n° (<code>REA-0001</code>)</td><td class="ex"></td></tr>
+      <tr><td>Désignation</td><td><span class="req">Obligatoire</span></td><td>Nom commercial précis</td><td class="ex">Acide sulfurique 98 %</td></tr>
+      <tr><td>Description / spécification</td><td><span class="opt">Facultatif</span></td><td>Conditionnement, norme…</td><td class="ex">Vrac, citerne</td></tr>
+      <tr><td>Famille</td><td><span class="req">Obligatoire</span></td><td>Code (ou nom) d'une famille existante ou de l'onglet 6</td><td class="ex">REA</td></tr>
+      <tr><td>Catégorie</td><td><span class="opt">Facultatif</span></td><td>Nom de catégorie</td><td class="ex">Acides</td></tr>
+      <tr><td>Unité</td><td><span class="req">Obligatoire</span></td><td>Code (ou libellé) d'unité</td><td class="ex">T</td></tr>
+      <tr><td>Code SH (douane)</td><td><span class="opt">Facultatif</span></td><td>Nomenclature douanière</td><td class="ex">2807.00.00</td></tr>
+      <tr><td>Stock minimum</td><td><span class="opt">Facultatif</span></td><td>Seuil d'alerte, dans l'unité de l'article</td><td class="ex">50</td></tr>
+      <tr><td>Stock initial (qté)</td><td><span class="opt">Facultatif</span></td><td>Quantité en stock au démarrage</td><td class="ex">120</td></tr>
+      <tr><td>Entrepôt du stock initial</td><td><span class="opt">Si stock</span></td><td>Nom exact (ou code) d'un entrepôt</td><td class="ex">Dépôt principal Kalukuluku</td></tr>
+      <tr><td>Coût unitaire initial</td><td><span class="opt">Si stock</span></td><td>Coût d'achat unitaire, sans symbole</td><td class="ex">310</td></tr>
+      <tr><td>Devise du coût</td><td><span class="opt">Facultatif</span></td><td>Liste ; vide = devise de base</td><td class="ex">USD</td></tr>
+    </tbody>
+  </table>
+  <div class="box box--warn"><b class="title">Stock initial</b>Si vous indiquez une quantité, l'<b>entrepôt</b> et le <b>coût unitaire</b> sont obligatoires, et la devise doit avoir un taux (onglet 4). Le stock est enregistré comme une entrée valorisée qui fixe le coût moyen (CMUP). Un article par entrepôt : pour un même article stocké dans deux entrepôts, saisissez le second stock après l'import par une entrée de stock.</div>
+
+  <h2><span class="n">9</span>Clients</h2>
+  <div class="where"><b>📍 Où le trouver :</b> <span><span class="path">Référentiels<i>›</i>Clients</span> — bouton <span class="btnx">+ Nouveau client</span> ; la fiche client liste ses PO et ses lieux de livraison.</span></div>
+  <p>Clients émetteurs des PO clients.</p>
+  <table>
+    <thead><tr><th>Colonne</th><th>Statut</th><th>Contenu attendu</th><th>Exemple</th></tr></thead>
+    <tbody>
+      <tr><td>Code</td><td><span class="opt">Facultatif</span></td><td>Vide = <code>CLI-0001</code>…</td><td class="ex"></td></tr>
+      <tr><td>Raison sociale</td><td><span class="req">Obligatoire</span></td><td>Nom officiel, repris tel quel dans l'onglet 10</td><td class="ex">Kamoto Copper Company</td></tr>
+      <tr><td>RCCM · Id. Nat. · NIF</td><td><span class="opt">Facultatif</span></td><td>Identifiants légaux du client</td><td class="ex">CD/KZI/RCCM/14-B-0000</td></tr>
+      <tr><td>Adresse · Ville · Pays</td><td><span class="opt">Facultatif</span></td><td>Adresse du siège</td><td class="ex">Route Likasi · Kolwezi · RDC</td></tr>
+      <tr><td>Contact · Téléphone · E-mail</td><td><span class="opt">Facultatif</span></td><td>Interlocuteur achats</td><td class="ex">M. Ilunga (achats)</td></tr>
+      <tr><td>Délai de paiement (jours)</td><td><span class="opt">Facultatif</span></td><td>Nombre entier ; vide = 30</td><td class="ex">60</td></tr>
+      <tr><td>Devise habituelle</td><td><span class="opt">Facultatif</span></td><td>Liste ; vide = devise de base</td><td class="ex">USD</td></tr>
+      <tr><td>Remarques</td><td><span class="opt">Facultatif</span></td><td>Texte libre</td><td class="ex"></td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="n">10</span>Lieux de livraison</h2>
+  <div class="where"><b>📍 Où le trouver :</b> <span><span class="path">Référentiels<i>›</i>Clients<i>›</i>fiche du client</span> — bloc « Lieux de livraison », bouton <span class="btnx">+ Ajouter</span>.</span></div>
+  <p>Adresses où les fournisseurs livrent chaque client (mine, usine, dépôt). <b>Plusieurs lignes possibles par client.</b> L'adresse choisie est figée sur le PO fournisseur.</p>
+  <table>
+    <thead><tr><th>Colonne</th><th>Statut</th><th>Contenu attendu</th><th>Exemple</th></tr></thead>
+    <tbody>
+      <tr><td>Client</td><td><span class="req">Obligatoire</span></td><td><b>Raison sociale exacte</b> (ou code) d'un client</td><td class="ex">Kamoto Copper Company</td></tr>
+      <tr><td>Nom du lieu</td><td><span class="req">Obligatoire</span></td><td>Unique pour ce client</td><td class="ex">Usine KTO – magasin réactifs</td></tr>
+      <tr><td>Adresse · Ville</td><td><span class="opt">Facultatif</span></td><td></td><td class="ex">Site KTO · Kolwezi</td></tr>
+      <tr><td>Contact sur place · Téléphone</td><td><span class="opt">Facultatif</span></td><td>Réceptionnaire</td><td class="ex">M. Kasongo</td></tr>
+      <tr><td>Coordonnées GPS</td><td><span class="opt">Facultatif</span></td><td>Latitude, longitude</td><td class="ex">-10.7167, 25.4667</td></tr>
+      <tr><td>Instructions d'accès</td><td><span class="opt">Facultatif</span></td><td>Horaires, EPI, consignes</td><td class="ex">Livraison 7h-15h, EPI obligatoires</td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="n">11</span>Fournisseurs</h2>
+  <div class="where"><b>📍 Où le trouver :</b> <span><span class="path">Référentiels<i>›</i>Fournisseurs</span> — bouton <span class="btnx">+ Nouveau fournisseur</span>.</span></div>
+  <p>Fournisseurs de marchandises, locaux et étrangers. <b>Mêmes colonnes que l'onglet Clients</b> (code <code>FRS-0001</code>…, raison sociale obligatoire, identifiants, adresse, contact, délai de paiement, devise, remarques).</p>
+  <p class="muted">Exemple : Sulfuric Trading FZE · JAFZA, Dubai · Émirats arabes unis · Mr. Khan · sales@sulfuric.ae · 30 jours · USD.</p>
+
+  <h2><span class="n">12</span>Agences en douane</h2>
+  <div class="where"><b>📍 Où le trouver :</b> <span><span class="path">Référentiels<i>›</i>Agences en douane</span> — bouton <span class="btnx">+ Nouvelle agence</span>. Accès portail : <span class="path">Administration<i>›</i>Utilisateurs</span> › rôle « Transitaire » + agence.</span></div>
+  <p>Transitaires / commissionnaires en douane. Ils pourront recevoir un accès au <b>portail</b> limité aux expéditions qui leur sont confiées.</p>
+  <table>
+    <thead><tr><th>Colonne</th><th>Statut</th><th>Contenu attendu</th><th>Exemple</th></tr></thead>
+    <tbody>
+      <tr><td>Code</td><td><span class="opt">Facultatif</span></td><td>Vide = <code>AGD-001</code>…</td><td class="ex"></td></tr>
+      <tr><td>Raison sociale</td><td><span class="req">Obligatoire</span></td><td></td><td class="ex">Trans Katanga Logistics</td></tr>
+      <tr><td>N° d'agrément</td><td><span class="opt">Facultatif</span></td><td>Agrément en douane</td><td class="ex">AGR-0000</td></tr>
+      <tr><td>NIF · RCCM</td><td><span class="opt">Facultatif</span></td><td></td><td class="ex">A0700000X</td></tr>
+      <tr><td>Adresse · Ville · Pays</td><td><span class="opt">Facultatif</span></td><td></td><td class="ex">Av. Kasaï 10 · Lubumbashi · RDC</td></tr>
+      <tr><td>Contact · Téléphone · E-mail</td><td><span class="opt">Facultatif</span></td><td></td><td class="ex">Mme Mwamba · ops@tkl.cd</td></tr>
+      <tr><td>Postes de douane</td><td><span class="opt">Facultatif</span></td><td>Frontières couvertes</td><td class="ex">Kasumbalesa</td></tr>
+      <tr><td>Remarques</td><td><span class="opt">Facultatif</span></td><td></td><td class="ex"></td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="n">13</span>Banques</h2>
+  <div class="where"><b>📍 Où le trouver :</b> <span><span class="path">Référentiels<i>›</i>Banques</span> — bouton <span class="btnx">+ Nouvelle banque</span>.</span></div>
+  <p>Banques domiciliataires des licences d'importation.</p>
+  <table>
+    <thead><tr><th>Colonne</th><th>Statut</th><th>Contenu attendu</th><th>Exemple</th></tr></thead>
+    <tbody>
+      <tr><td>Code</td><td><span class="req">Obligatoire</span></td><td>Court, unique, repris dans l'onglet 14</td><td class="ex">RAW</td></tr>
+      <tr><td>Nom de la banque</td><td><span class="req">Obligatoire</span></td><td>Nom officiel</td><td class="ex">Rawbank SA</td></tr>
+      <tr><td>Sigle</td><td><span class="opt">Facultatif</span></td><td></td><td class="ex">Rawbank</td></tr>
+      <tr><td>Code SWIFT</td><td><span class="opt">Facultatif</span></td><td>8 ou 11 caractères</td><td class="ex">RAWBCDKI</td></tr>
+      <tr><td>Pays · Téléphone · E-mail · Site web</td><td><span class="opt">Facultatif</span></td><td></td><td class="ex">RDC · www.rawbank.com</td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="n">14</span>Agences bancaires</h2>
+  <div class="where"><b>📍 Où le trouver :</b> <span><span class="path">Référentiels<i>›</i>Banques<i>›</i>fiche de la banque</span> — bloc « Agences », bouton <span class="btnx">+ Nouvelle agence</span>.</span></div>
+  <p>Agences (branches) de chaque banque.</p>
+  <table>
+    <thead><tr><th>Colonne</th><th>Statut</th><th>Contenu attendu</th><th>Exemple</th></tr></thead>
+    <tbody>
+      <tr><td>Banque</td><td><span class="req">Obligatoire</span></td><td>Code (ou nom, ou sigle) d'une banque de l'onglet 13</td><td class="ex">RAW</td></tr>
+      <tr><td>Code agence</td><td><span class="opt">Facultatif</span></td><td>Unique pour la banque</td><td class="ex">LSH01</td></tr>
+      <tr><td>Nom de l'agence</td><td><span class="req">Obligatoire</span></td><td>Unique pour la banque</td><td class="ex">Agence Lubumbashi centre</td></tr>
+      <tr><td>Ville · Adresse · Téléphone · E-mail</td><td><span class="opt">Facultatif</span></td><td></td><td class="ex">Lubumbashi · Av. Mobutu</td></tr>
+      <tr><td>Gestionnaire / contact</td><td><span class="opt">Facultatif</span></td><td>Chargé d'affaires</td><td class="ex">M. Mutombo</td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="n">15</span>Types de documents</h2>
+  <div class="where"><b>📍 Où le trouver :</b> <span><span class="path">Référentiels<i>›</i>Documents d’expédition</span> — onglet « Types de documents », bouton <span class="btnx">+ Nouveau type de document</span>.</span></div>
+  <p>Documents exigés au cours d'un dossier : facture, BL, licence, FERI, certificat d'origine… Ils forment la <b>check-list documentaire</b> de chaque expédition.</p>
+  <table>
+    <thead><tr><th>Colonne</th><th>Statut</th><th>Contenu attendu</th><th>Exemple</th></tr></thead>
+    <tbody>
+      <tr><td>Code</td><td><span class="req">Obligatoire</span></td><td>Court, unique, repris dans l'onglet 16</td><td class="ex">FERI</td></tr>
+      <tr><td>Nom du document</td><td><span class="req">Obligatoire</span></td><td></td><td class="ex">Fiche électronique de renseignement à l'importation</td></tr>
+      <tr><td>Description</td><td><span class="opt">Facultatif</span></td><td></td><td class="ex"></td></tr>
+      <tr><td>Fourni par</td><td><span class="req">Obligatoire</span></td><td>Liste : qui doit déposer le document</td><td class="ex">Transitaire / agence en douane</td></tr>
+      <tr><td>Niveau</td><td><span class="req">Obligatoire</span></td><td><b>Dossier</b> = une fois par commande ; <b>Expédition</b> = à chaque livraison</td><td class="ex">Expédition (à chaque livraison)</td></tr>
+      <tr><td>N° obligatoire ?</td><td><span class="opt">Oui / Non</span></td><td>Vide = Oui</td><td class="ex">Oui</td></tr>
+      <tr><td>Fichier obligatoire ?</td><td><span class="opt">Oui / Non</span></td><td>Vide = Oui (scan à joindre)</td><td class="ex">Oui</td></tr>
+      <tr><td>Date d'émission obligatoire ?</td><td><span class="opt">Oui / Non</span></td><td>Vide = Non</td><td class="ex">Oui</td></tr>
+      <tr><td>Date d'expiration ?</td><td><span class="opt">Oui / Non</span></td><td>Vide = Non. Un document expiré n'est plus valable</td><td class="ex">Non</td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="n">16</span>Règles documentaires</h2>
+  <div class="where"><b>📍 Où le trouver :</b> <span><span class="path">Référentiels<i>›</i>Documents d’expédition</span> — onglet « Règles », bouton <span class="btnx">+ Nouvelle règle</span>. Le simulateur de la même page montre les documents exigés pour un cas donné.</span></div>
+  <p>Quand chaque document est-il exigé ? Une règle combine un document et des critères ; <b>« Tous » ou vide = toutes les valeurs</b>. Les règles se cumulent : un document est exigé dès qu'une règle correspond au dossier.</p>
+  <table>
+    <thead><tr><th>Colonne</th><th>Statut</th><th>Contenu attendu</th><th>Exemple</th></tr></thead>
+    <tbody>
+      <tr><td>Code document</td><td><span class="req">Obligatoire</span></td><td>Code d'un type de l'onglet 15</td><td class="ex">FERI</td></tr>
+      <tr><td>Mode d'exécution</td><td><span class="opt">Facultatif</span></td><td>Liste : Achat local, Importation, Vente sur stock, Tous</td><td class="ex">Importation</td></tr>
+      <tr><td>Famille d'articles</td><td><span class="opt">Facultatif</span></td><td>Code ou nom de famille ; vide = toutes</td><td class="ex"></td></tr>
+      <tr><td>Mode de transport</td><td><span class="opt">Facultatif</span></td><td>Liste : Route, Rail, Mer, Air, Multimodal, Tous</td><td class="ex">Route</td></tr>
+      <tr><td>Obligatoire ?</td><td><span class="opt">Oui / Non</span></td><td>Non = document recommandé seulement. Vide = Oui</td><td class="ex">Oui</td></tr>
+      <tr><td>Bloque à l'étape</td><td><span class="opt">Facultatif</span></td><td>Étape interdite tant que le document n'est pas validé : Départ, Réception, Facturation, Clôture ; Aucun = ne bloque pas</td><td class="ex">Départ</td></tr>
+      <tr><td>Remarques</td><td><span class="opt">Facultatif</span></td><td></td><td class="ex"></td></tr>
+    </tbody>
+  </table>
+  <div class="box"><b class="title">Exemple de lecture</b>« FERI · Importation · (toutes familles) · Route · Oui · Départ » : pour toute importation par la route, la FERI est obligatoire et le camion ne peut pas passer « en route » tant qu'elle n'est pas déposée et validée.</div>
+</section>
+
+<section>
+  <h2>Importer le fichier rempli</h2>
+  <ol>
+    <li>Connectez-vous avec un compte <b>administrateur</b>, dépliez la section <b>Administration</b> de la barre latérale et cliquez sur <b>Import des référentiels</b>. Le bouton <b>Fiche de collecte vierge</b> (en haut à droite) télécharge le classeur vide.</li>
+    <li>Choisissez le mode :
+      <ul>
+        <li><b>Mettre à jour</b> (habituel) : les éléments déjà présents (même code ou même nom) sont mis à jour avec les cellules remplies — <b>une cellule vide ne remplace rien</b> — et les nouveaux sont créés. Rien n'est supprimé.</li>
+        <li><b>Réinitialiser</b> (mise en service uniquement) : efface les opérations et les référentiels, puis importe le fichier. Les comptes utilisateurs, les sites et la configuration sont conservés. Confirmation par la saisie de <code>REINITIALISER</code>.</li>
+      </ul></li>
+    <li>Déposez le fichier puis cliquez sur <b>Analyser le fichier</b> : une <b>simulation</b> s'affiche, sans rien enregistrer — éléments à créer, à mettre à jour, inchangés, et la liste des erreurs avec <b>onglet et n° de ligne</b>.</li>
+    <li>Corrigez les erreurs dans Excel, redéposez le fichier, puis cliquez sur <b>Confirmer l'import</b>.</li>
+  </ol>
+  <div class="box box--ok"><b class="title">Tout ou rien</b>Une seule erreur bloque tout l'import : la base n'est jamais à moitié remplie. Le même fichier peut être réimporté autant de fois que nécessaire sans créer de doublons.</div>
+
+  <h3>Erreurs fréquentes</h3>
+  <table>
+    <thead><tr><th>Message</th><th>Cause</th><th>Correction</th></tr></thead>
+    <tbody>
+      <tr><td>« Site … introuvable »</td><td>Nom du site différent entre les onglets 2 et 3 (espace, accent, majuscule)</td><td>Copier-coller le nom exact depuis l'onglet 2</td></tr>
+      <tr><td>« Famille … introuvable »</td><td>Code de famille absent des familles existantes et de l'onglet 6</td><td>Ajouter la famille dans l'onglet 6 ou corriger le code</td></tr>
+      <tr><td>« Stock initial : indiquez l'entrepôt et le coût »</td><td>Quantité saisie sans entrepôt ou sans coût</td><td>Compléter les deux colonnes ou vider la quantité</td></tr>
+      <tr><td>« Aucun taux de change pour … »</td><td>Coût dans une devise sans taux</td><td>Ajouter le taux dans l'onglet 4</td></tr>
+      <tr><td>« … n'est pas un nombre »</td><td>Unité ou symbole dans une cellule numérique (« 120 T », « 310 $ »)</td><td>Ne garder que le nombre</td></tr>
+      <tr><td>« Adresse e-mail invalide »</td><td>Deux adresses dans la cellule ou faute de frappe</td><td>Une seule adresse valide</td></tr>
+      <tr><td>« valeur … non reconnue »</td><td>Texte tapé à la main dans une liste déroulante</td><td>Choisir la valeur dans la liste</td></tr>
+    </tbody>
+  </table>
+</section>
+
+</body>
+</html>
