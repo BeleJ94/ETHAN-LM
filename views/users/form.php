@@ -63,6 +63,11 @@ echo View::partial('partials/page_header', ['icon' => 'user', 'heading' => $u ? 
                 <?= error_msg('forwarder_id') ?>
             </div>
             <div class="field">
+                <span class="label"><?= e(t('users.section.approvals')) ?></span>
+                <label class="check"><input type="checkbox" name="invoice_approver" value="1" <?= old('invoice_approver', $u['invoice_approver'] ?? 0) ? 'checked' : '' ?>> <?= e(t('users.invoice_approver')) ?></label>
+                <p class="hint"><?= e(t('users.invoice_approver_hint')) ?></p>
+            </div>
+            <div class="field">
                 <span class="label"><?= e(t('users.col.sites')) ?></span>
                 <div class="check-list">
                     <?php foreach ($sites as $s): ?>

@@ -225,13 +225,14 @@ final class OrderRepository
     /** @return list<array<string,mixed>> Livraisons avec leurs lignes */
     public function deliveries(int $orderId): array
     {
-        $stmt = Database::pdo()->prepare('SELECT d.*, p.reference AS po_reference, s.name AS supplier_name FROM deliveries d
+        $stmt = Database::pdo()->prepare('SELECT d.*, p.reference AS po_reference, s.name AS supplier_name, ' . self::DELIVERY_INVOICE_SQL . ' FROM deliveries d
             JOIN purchase_orders p ON p.id = d.po_id JOIN suppliers s ON s.id = p.supplier_id
             WHERE d.order_id = ? ORDER BY d.shipped_at DESC, d.id DESC');
         $stmt->execute([$orderId]);
         $deliveries = $stmt->fetchAll();
-        $lines = Database::pdo()->prepare('SELECT dl.*, i.sku, i.name AS item_name, u.code AS unit FROM delivery_lines dl
-            JOIN purchase_order_lines pl ON pl.id = dl.po_line_id JOIN items i ON i.id = pl.item_id JOIN units u ON u.id = i.unit_id
+        $lines = Database::pdo()->prepare('SELECT dl.*, pl.item_id, i.sku, i.name AS item_name, u.code AS unit, col.specification, col.unit_price AS sale_price
+            FROM delivery_lines dl JOIN purchase_order_lines pl ON pl.id = dl.po_line_id JOIN customer_order_lines col ON col.id = pl.order_line_id
+            JOIN items i ON i.id = pl.item_id JOIN units u ON u.id = i.unit_id
             WHERE dl.delivery_id = ?');
         foreach ($deliveries as &$d) {
             $lines->execute([$d['id']]);
@@ -240,13 +241,20 @@ final class OrderRepository
         return $deliveries;
     }
 
+    /** Facturation client par expédition : valeur réceptionnée (× prix de vente) et facture client active de l'expédition `d`. */
+    public const DELIVERY_INVOICE_SQL = "(SELECT COALESCE(SUM(COALESCE(dl2.quantity_received, 0) * col2.unit_price), 0) FROM delivery_lines dl2
+            JOIN purchase_order_lines pl2 ON pl2.id = dl2.po_line_id JOIN customer_order_lines col2 ON col2.id = pl2.order_line_id
+            WHERE dl2.delivery_id = d.id) AS invoice_value,
+        (SELECT iv.id FROM invoices iv WHERE iv.delivery_id = d.id AND iv.direction = 'receivable' AND iv.status <> 'cancelled' LIMIT 1) AS invoice_id,
+        (SELECT iv.reference FROM invoices iv WHERE iv.delivery_id = d.id AND iv.direction = 'receivable' AND iv.status <> 'cancelled' LIMIT 1) AS invoice_reference";
+
     /** @return list<array<string,mixed>> Factures (clients et fournisseurs) avec montant payé */
     public function invoices(int $orderId): array
     {
-        $stmt = Database::pdo()->prepare('SELECT i.*, COALESCE(c.name, s.name) AS party_name, p.reference AS po_reference,
+        $stmt = Database::pdo()->prepare('SELECT i.*, COALESCE(c.name, s.name) AS party_name, p.reference AS po_reference, dv.reference AS delivery_reference,
                 (SELECT COALESCE(SUM(py.amount), 0) FROM payments py WHERE py.invoice_id = i.id) AS paid
             FROM invoices i LEFT JOIN customers c ON c.id = i.customer_id LEFT JOIN suppliers s ON s.id = i.supplier_id
-            LEFT JOIN purchase_orders p ON p.id = i.po_id
+            LEFT JOIN purchase_orders p ON p.id = i.po_id LEFT JOIN deliveries dv ON dv.id = i.delivery_id
             WHERE i.order_id = ? ORDER BY i.direction DESC, i.invoice_date, i.id');
         $stmt->execute([$orderId]);
         $invoices = $stmt->fetchAll();
@@ -301,7 +309,7 @@ final class OrderRepository
             }
             $open = max(0, (float) $inv['amount'] - (float) $inv['paid']);
             if ($inv['direction'] === 'receivable') {
-                $invoiced += (float) $inv['amount'];
+                $invoiced += (float) ($inv['subtotal'] ?? $inv['amount']);
                 $receivableOpen += $open;
             } else {
                 $payableOpen += $open;

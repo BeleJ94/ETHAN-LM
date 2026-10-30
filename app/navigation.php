@@ -20,7 +20,8 @@ return [
         ['path' => '/purchase-orders', 'icon' => 'shopping-cart', 'label' => 'nav.purchase_orders', 'perm' => 'orders.view', 'badge' => 'purchase_orders'],
         ['path' => '/licences', 'icon' => 'stamp', 'label' => 'nav.licences', 'perm' => 'orders.view', 'badge' => 'licences'],
         ['path' => '/deliveries', 'icon' => 'truck', 'label' => 'nav.deliveries', 'perm' => 'orders.view', 'badge' => 'deliveries'],
-        ['path' => '/finance', 'icon' => 'banknote', 'label' => 'nav.finance', 'perm' => 'finance.view', 'badge' => 'finance'],
+        ['path' => '/finance/customers', 'icon' => 'file-up', 'label' => 'nav.invoices_customers', 'perm' => 'finance.view', 'badge' => 'receivables'],
+        ['path' => '/finance/suppliers', 'icon' => 'file-down', 'label' => 'nav.invoices_suppliers', 'perm' => 'finance.view', 'badge' => 'payables'],
     ]],
     ['id' => 'stock', 'section' => 'nav.section.stock', 'items' => [
         ['path' => '/items', 'icon' => 'package', 'label' => 'nav.items', 'perm' => 'stock.view'],

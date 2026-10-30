@@ -401,9 +401,10 @@
             focusConfirm: false,
             showLoaderOnConfirm: true,
             allowOutsideClick: () => !Swal.isLoading(),
-            customClass: { popup: 'swal-form swal-sober' },
+            customClass: { popup: 'swal-form swal-sober' + ('modalWide' in form.dataset ? ' swal-wide' : '') },
             didOpen: (popup) => {
                 refreshIcons();
+                popup.querySelectorAll('[data-lines]').forEach(refreshLines);
                 form.dispatchEvent(new Event('elm:init', { bubbles: true }));
                 const first = popup.querySelector('input:not([type=hidden]), select, textarea');
                 if (first) first.focus();
@@ -913,6 +914,9 @@
         Object.keys(values).forEach((field) => {
             const select = document.querySelector('[data-filters-for] [data-filter="' + field + '"]');
             if (select) { select.value = values[field]; form = select.closest('[data-filters-for]'); }
+            // Onglets de statut liés au même filtre
+            document.querySelectorAll('[data-status-tabs] [data-set-filter="' + field + '"]')
+                .forEach((b) => b.setAttribute('aria-pressed', String((b.dataset.value || '') === values[field])));
         });
         if (!form) return;
         const name = form.dataset.filtersFor;
@@ -935,7 +939,27 @@
         });
         const foot = table.querySelector('[data-lines-total]');
         if (foot) foot.textContent = total ? core.formatNumber(total, config.locale, 2) : '—';
+        // TVA facultative (facture client) : HT → TVA → TTC
+        const ttc = table.querySelector('[data-lines-ttc]');
+        if (!ttc) return;
+        const form = table.closest('form');
+        const toggle = form && form.querySelector('[data-vat-toggle]');
+        const rateInput = form && form.querySelector('[data-vat-rate]');
+        const on = !!(toggle && toggle.checked);
+        const rate = on ? Number(rateInput.value) || 0 : 0;
+        const vat = Math.round(total * rate) / 100;
+        table.querySelector('[data-vat-row]').hidden = !on;
+        table.querySelector('[data-vat-label]').textContent = on ? '(' + core.formatNumber(rate, config.locale, 2) + ' %)' : '';
+        table.querySelector('[data-lines-vat]').textContent = core.formatNumber(vat, config.locale, 2);
+        ttc.textContent = total ? core.formatNumber(total + vat, config.locale, 2) : '—';
     }
+    $(document).on('change input', '[data-vat-toggle], [data-vat-rate]', function () {
+        const form = this.closest('form');
+        const rate = form.querySelector('[data-vat-rate]');
+        rate.disabled = !form.querySelector('[data-vat-toggle]').checked;
+        rate.required = !rate.disabled;
+        form.querySelectorAll('[data-lines]').forEach(refreshLines);
+    });
     document.querySelectorAll('[data-lines]').forEach(refreshLines);
     $(document).on('input', '[data-lines] [data-line-qty], [data-lines] [data-line-price]', function () {
         refreshLines(this.closest('[data-lines]'));
@@ -949,6 +973,17 @@
         body.insertAdjacentHTML('beforeend', html);
         refreshIcons();
         body.lastElementChild.querySelector('select, input').focus();
+    });
+    // Aperçu d'un document avant enregistrement : le formulaire est envoyé tel quel vers l'adresse d'aperçu, dans un nouvel onglet.
+    $(document).on('click', '[data-form-preview]', function () {
+        const form = this.closest('form');
+        if (!form.reportValidity()) return;
+        const [action, target] = [form.getAttribute('action'), form.getAttribute('target')];
+        form.setAttribute('action', this.dataset.formPreview);
+        form.setAttribute('target', '_blank');
+        HTMLFormElement.prototype.submit.call(form); // envoi natif : ne passe pas par l'enregistrement AJAX
+        form.setAttribute('action', action);
+        if (target === null) form.removeAttribute('target'); else form.setAttribute('target', target);
     });
     $(document).on('click', '[data-line-remove]', function () {
         const body = this.closest('tbody');

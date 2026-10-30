@@ -14,6 +14,7 @@ final class CurrentUser
         public readonly Role $role,
         public readonly array $siteIds,
         public readonly ?int $forwarderId = null,
+        public readonly bool $invoiceApprover = false,
     ) {
     }
 
@@ -28,8 +29,19 @@ final class CurrentUser
         if ($permission === 'portal.access') {
             return $this->isForwarder() && $this->forwarderId !== null;
         }
+        // Approbation des factures clients : habilitation donnée à l'utilisateur (Paramètres → Utilisateurs), pas au rôle.
+        // L'administrateur approuve toujours, y compris ses propres factures.
+        if ($permission === 'finance.approve') {
+            return $this->role === Role::Admin || ($this->invoiceApprover && !$this->isForwarder());
+        }
         $perms = $this->role->permissions();
         return in_array('*', $perms, true) || in_array($permission, $perms, true);
+    }
+
+    /** Contrôle à 2 niveaux des factures : l'émetteur ne s'approuve pas lui-même, sauf l'administrateur. */
+    public function canApproveInvoiceOf(int $createdBy): bool
+    {
+        return $this->can('finance.approve') && ($this->role === Role::Admin || $this->id !== $createdBy);
     }
 
     public function initials(): string

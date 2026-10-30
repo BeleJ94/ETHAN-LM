@@ -32,7 +32,7 @@ test('formatDate est indépendant du fuseau', () => {
     assert.equal(core.formatDate(''), '—');
 });
 
-for (const [table, file] of [['items', 'ItemRepository.php'], ['movements', 'MovementRepository.php'], ['orders', 'OrderRepository.php'], ['invoices', 'InvoiceRepository.php'], ['deliveries', 'DeliveryRepository.php']]) {
+for (const [table, file] of [['items', 'ItemRepository.php'], ['movements', 'MovementRepository.php'], ['orders', 'OrderRepository.php'], ['invoices_receivable', 'InvoiceRepository.php'], ['invoices_payable', 'InvoiceRepository.php'], ['deliveries', 'DeliveryRepository.php']]) {
     test(`${table} : toute colonne triable est dans la liste blanche PHP`, () => {
         const allowed = phpSortable(file);
         defs[table].filter((c) => c.orderable).forEach((c) => {
@@ -42,7 +42,7 @@ for (const [table, file] of [['items', 'ItemRepository.php'], ['movements', 'Mov
 
     test(`${table} : tout rendu HTML échappe les données`, () => {
         const evil = '<script>alert(1)</script>';
-        const numeric = ['quantity', 'min_stock', 'avg_cost', 'value', 'unit_cost', 'unit_cost_base', 'active', 'amount', 'progress', 'late', 'balance', 'overdue', 'shipped', 'received', 'gap', 'docs_done', 'docs_total', 'docs_to_validate'];
+        const numeric = ['quantity', 'min_stock', 'avg_cost', 'value', 'unit_cost', 'unit_cost_base', 'active', 'amount', 'progress', 'late', 'balance', 'overdue', 'subtotal', 'vat_amount', 'vat_rate', 'paid', 'days_left', 'shipped', 'received', 'gap', 'docs_done', 'docs_total', 'docs_to_validate'];
         const row = new Proxy({}, { get: (_, k) => (k === 'type' ? 'in' : (numeric.includes(k) ? 1 : evil)) });
         defs[table].forEach((c) => {
             assert.ok(!c.html(row).includes('<script>'), `${table}.${c.data} non échappé`);

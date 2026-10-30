@@ -198,10 +198,17 @@ return static function (Router $r): void {
     $r->post('/portal/deliveries/{id}/file-number', [PortalController::class, 'fileNumber']);
 
     // Factures et paiements
-    $r->get('/finance', [InvoiceController::class, 'index']);
+    // Factures clients et fournisseurs : deux pages distinctes ; /finance (anciens liens) mène aux factures clients
+    $r->get('/finance', [InvoiceController::class, 'legacy']);
+    $r->get('/finance/customers', [InvoiceController::class, 'customers']);
+    $r->get('/finance/suppliers', [InvoiceController::class, 'suppliers']);
     $r->get('/finance/data', [InvoiceController::class, 'data']);
     $r->post('/orders/{id}/invoices', [InvoiceController::class, 'store']);
+    $r->post('/orders/{id}/invoices/preview', [InvoiceController::class, 'preview']);
     $r->get('/invoices/{id}', [InvoiceController::class, 'show']);
+    $r->get('/invoices/{id}/print', [InvoiceController::class, 'print']);
+    $r->post('/invoices/{id}', [InvoiceController::class, 'update']);
+    $r->post('/invoices/{id}/approve', [InvoiceController::class, 'approve']);
     $r->post('/invoices/{id}/payments', [InvoiceController::class, 'pay']);
     $r->post('/invoices/{id}/attachments', [InvoiceController::class, 'attach']);
     $r->post('/invoices/{id}/cancel', [InvoiceController::class, 'cancel']);

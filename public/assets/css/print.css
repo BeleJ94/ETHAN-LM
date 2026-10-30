@@ -44,3 +44,29 @@ tfoot td { font-weight: 600; border-bottom: 0; }
 .is-embedded .print-toolbar { display: none; }
 .is-embedded body { background: #E9ECF0; }
 .is-embedded .doc { margin: 12px auto; }
+
+/* Facture client (format logistique) */
+.doc--invoice { position: relative; overflow: hidden; }
+.doc__stamp { position: absolute; top: 120mm; left: 50%; transform: translateX(-50%) rotate(-24deg); font-size: 42pt; font-weight: 600;
+    letter-spacing: .08em; text-transform: uppercase; color: rgba(31, 78, 121, .10); border: 6px solid rgba(31, 78, 121, .10);
+    padding: 4mm 10mm; border-radius: 8px; pointer-events: none; white-space: nowrap; }
+.doc--cancelled .doc__stamp { color: rgba(176, 32, 32, .14); border-color: rgba(176, 32, 32, .14); }
+.doc--paid .doc__stamp { color: rgba(30, 120, 60, .14); border-color: rgba(30, 120, 60, .14); }
+.meta--refs { grid-template-columns: repeat(6, 1fr); border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; }
+.transport { margin-bottom: 14px; }
+.transport h2, .words h2 { margin: 0 0 4px; font-size: 8.5pt; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+.transport dl { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px 12px; margin: 0; font-size: 9.5pt; }
+.transport dt { font-size: 8pt; color: var(--muted); }
+.transport dd { margin: 0; }
+.lines-table tbody tr:nth-child(even) td { background: #F7F9FB; }
+.totals-row { display: grid; grid-template-columns: 1fr 75mm; gap: 16px; align-items: start; margin-bottom: 14px; }
+.words p { margin: 0; font-style: italic; font-size: 10pt; }
+.words .vat-note { margin-top: 6px; font-style: normal; font-size: 8.5pt; }
+table.totals { margin: 0; }
+.totals th { background: none; color: var(--text); text-transform: none; font-size: 10pt; font-weight: 400; border-bottom: 1px solid var(--border); }
+.totals td { font-weight: 600; }
+.totals__due th, .totals__due td { background: var(--accent); color: #fff; font-weight: 600; font-size: 11pt; }
+.boxes--pay .bank { margin-top: 4px; font-family: ui-monospace, Consolas, monospace; font-size: 9.5pt; }
+.doc--message h1 { color: var(--accent); }
+@media print { .lines-table tbody tr:nth-child(even) td { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    th, .totals__due th, .totals__due td, .box--accent { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }

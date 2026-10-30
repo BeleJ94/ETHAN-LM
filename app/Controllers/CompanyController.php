@@ -35,7 +35,11 @@ final class CompanyController extends Controller
             'name' => 'required|max:190', 'legal_form' => 'max:60', 'address' => 'max:255', 'city' => 'max:120', 'country' => 'max:80',
             'phone' => 'max:60', 'email' => 'email|max:190', 'website' => 'max:190', 'rccm' => 'max:60', 'id_nat' => 'max:60',
             'nif' => 'max:60', 'vat_number' => 'max:60', 'importer_number' => 'max:60', 'share_capital' => 'max:60',
+            'bank_details' => 'max:1000', 'invoice_terms' => 'max:1000', 'vat_rate' => 'numeric|min:0|max:6',
         ]);
+        if (is_numeric($input['vat_rate'] ?? '') && (float) $input['vat_rate'] > 100) {
+            $v->addError('vat_rate', t('invoice.error.vat_rate'));
+        }
         if ($v->fails()) {
             return $this->backWithErrors('/settings/company', $v->errors(), $input);
         }

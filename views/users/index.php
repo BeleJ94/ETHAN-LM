@@ -20,7 +20,7 @@ echo View::partial('partials/page_header', ['icon' => 'users', 'heading' => t('n
         <?php foreach ($users as $u): ?>
             <tr>
                 <td><strong><?= e($u['name']) ?></strong><br><span class="muted"><?= e($u['email']) ?></span></td>
-                <td><?= e(t('role.' . $u['role'])) ?></td>
+                <td><?= e(t('role.' . $u['role'])) ?><?= $u['invoice_approver'] ? ' <span class="chip" title="' . e(t('users.invoice_approver')) . '">' . icon('badge-check') . ' ' . e(t('users.approver_chip')) . '</span>' : '' ?></td>
                 <td><?= e($u['role'] === 'admin' ? t('users.all_sites') : ($u['sites'] ?: '—')) ?></td>
                 <td><?= e(fmt_date($u['last_login_at'], true)) ?></td>
                 <td><span class="badge badge--<?= $u['active'] ? 'available' : 'immobilized' ?>"><?= e(t($u['active'] ? 'common.active' : 'common.inactive')) ?></span></td>

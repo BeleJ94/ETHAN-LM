@@ -111,6 +111,8 @@ final class UserController extends Controller
             'email' => $input['email'],
             'role' => $input['role'],
             'forwarder_id' => $input['role'] === 'forwarder' ? $forwarderId : null,
+            // Approbateur des factures clients : sans objet pour un compte transitaire
+            'invoice_approver' => $input['role'] !== 'forwarder' && isset($input['invoice_approver']) ? 1 : 0,
             'active' => isset($input['active']) || $before === null ? 1 : 0,
             'password' => ($input['password'] ?? '') ?: null,
         ];
@@ -133,7 +135,7 @@ final class UserController extends Controller
     private function summary(array $errors, ?array $before): string
     {
         $labels = [
-            'name' => 'users.col.name', 'email' => 'auth.email', 'role' => 'users.col.role', 'forwarder_id' => 'users.forwarder',
+            'name' => 'users.col.name', 'email' => 'auth.email', 'role' => 'users.col.role', 'forwarder_id' => 'users.forwarder', 'invoice_approver' => 'users.invoice_approver',
             'password' => 'auth.password', 'password_confirm' => 'users.password_confirm', 'active' => 'common.status',
         ];
         $lines = [];

@@ -55,7 +55,7 @@ final class CockpitDrill
             'deliveries_month' => $this->deliveries($t('deliveries_month', ['month' => self::monthLabel($param ?: date('Y-m'))]),
                 "d.status = 'delivered' AND DATE_FORMAT(d.delivered_at, '%Y-%m') = " . Database::pdo()->quote(preg_match('/^\d{4}-\d{2}$/', $param) ? $param : date('Y-m'))),
             'todo' => $this->todo(),
-            'nav' => in_array($param, ['orders', 'purchase_orders', 'licences', 'deliveries', 'finance'], true) ? $this->todo($param) : null,
+            'nav' => in_array($param, ['orders', 'purchase_orders', 'licences', 'deliveries', 'receivables', 'payables'], true) ? $this->todo($param) : null,
             'activity' => $this->activity(),
             default => null,
         };

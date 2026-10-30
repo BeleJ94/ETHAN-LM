@@ -42,6 +42,19 @@ $field = function (string $name, string $labelKey, bool $required = false, strin
         </div>
     </fieldset>
     <fieldset class="form-section">
+        <legend><?= e(t('company.section.invoicing')) ?></legend>
+        <div class="form-grid">
+            <div class="field"><label for="vat_rate"><?= e(t('company.vat_rate')) ?></label>
+                <input id="vat_rate" name="vat_rate" type="number" step="0.01" min="0" max="100" inputmode="decimal" value="<?= e(old('vat_rate', $company['vat_rate'] ?? '')) ?>"<?= error_attr('vat_rate') ?>>
+                <p class="hint"><?= e(t('company.vat_rate_hint')) ?></p><?= error_msg('vat_rate') ?></div>
+            <?php foreach (['bank_details' => 'company.bank_details', 'invoice_terms' => 'company.invoice_terms'] as $name => $key): ?>
+                <div class="field"><label for="<?= $name ?>"><?= e(t($key)) ?></label>
+                    <textarea id="<?= $name ?>" name="<?= $name ?>" rows="4" maxlength="1000"<?= error_attr($name) ?>><?= e(old($name, $company[$name] ?? '')) ?></textarea>
+                    <p class="hint"><?= e(t($key . '_hint')) ?></p><?= error_msg($name) ?></div>
+            <?php endforeach ?>
+        </div>
+    </fieldset>
+    <fieldset class="form-section">
         <legend><?= e(t('company.section.logo')) ?></legend>
         <div class="company-logo">
             <div class="company-logo__preview">

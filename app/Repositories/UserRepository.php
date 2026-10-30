@@ -11,7 +11,7 @@ final class UserRepository
     /** @return list<array<string,mixed>> */
     public function all(): array
     {
-        return Database::pdo()->query('SELECT u.id, u.name, u.email, u.role, u.active, u.last_login_at,
+        return Database::pdo()->query('SELECT u.id, u.name, u.email, u.role, u.invoice_approver, u.active, u.last_login_at,
                 GROUP_CONCAT(s.code ORDER BY s.code SEPARATOR \', \') AS sites
             FROM users u LEFT JOIN user_sites us ON us.user_id = u.id LEFT JOIN sites s ON s.id = us.site_id
             GROUP BY u.id ORDER BY u.name')->fetchAll();
@@ -20,7 +20,7 @@ final class UserRepository
     /** @return array<string,mixed>|null */
     public function find(int $id): ?array
     {
-        $stmt = Database::pdo()->prepare('SELECT id, name, email, role, forwarder_id, locale, active FROM users WHERE id = ?');
+        $stmt = Database::pdo()->prepare('SELECT id, name, email, role, forwarder_id, invoice_approver, locale, active FROM users WHERE id = ?');
         $stmt->execute([$id]);
         $user = $stmt->fetch();
         if (!$user) {
@@ -47,12 +47,12 @@ final class UserRepository
     {
         $pdo = Database::pdo();
         if ($id === null) {
-            $pdo->prepare('INSERT INTO users (name, email, role, forwarder_id, active, password_hash) VALUES (?,?,?,?,?,?)')
-                ->execute([$data['name'], $data['email'], $data['role'], $data['forwarder_id'] ?? null, $data['active'], password_hash((string) $data['password'], PASSWORD_DEFAULT)]);
+            $pdo->prepare('INSERT INTO users (name, email, role, forwarder_id, invoice_approver, active, password_hash) VALUES (?,?,?,?,?,?,?)')
+                ->execute([$data['name'], $data['email'], $data['role'], $data['forwarder_id'] ?? null, $data['invoice_approver'] ?? 0, $data['active'], password_hash((string) $data['password'], PASSWORD_DEFAULT)]);
             $id = (int) $pdo->lastInsertId();
         } else {
-            $pdo->prepare('UPDATE users SET name = ?, email = ?, role = ?, forwarder_id = ?, active = ? WHERE id = ?')
-                ->execute([$data['name'], $data['email'], $data['role'], $data['forwarder_id'] ?? null, $data['active'], $id]);
+            $pdo->prepare('UPDATE users SET name = ?, email = ?, role = ?, forwarder_id = ?, invoice_approver = ?, active = ? WHERE id = ?')
+                ->execute([$data['name'], $data['email'], $data['role'], $data['forwarder_id'] ?? null, $data['invoice_approver'] ?? 0, $data['active'], $id]);
             if (!empty($data['password'])) {
                 $pdo->prepare('UPDATE users SET password_hash = ? WHERE id = ?')->execute([password_hash($data['password'], PASSWORD_DEFAULT), $id]);
             }

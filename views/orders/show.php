@@ -33,6 +33,8 @@ foreach ($pos as $p) {
 $activePos = array_values(array_filter($pos, fn ($p) => in_array($p['status'], ['sent', 'partial'], true)));
 $invoicablePos = array_values(array_filter($pos, fn ($p) => in_array($p['status'], ['sent', 'partial', 'delivered'], true)));
 $toInvoice = max(0, round($facts['delivered_value'] - $facts['invoiced_value'], 2));
+// Facturation client par expédition : expéditions livrées sans facture client active
+$invoicableDeliveries = array_values(array_filter($deliveries, fn ($d) => $d['status'] === 'delivered' && $d['invoice_id'] === null));
 // Importation : étapes licence et inspection ; un ARA (« bloqué ») se place sur l'étape inspection.
 $steps = $o['fulfillment_mode'] === 'import'
     ? ['received', 'sourcing', 'awaiting_licence', 'inspection', 'ordered', 'in_delivery', 'delivered', 'closed']
@@ -175,8 +177,8 @@ if ($next && $open) {
             break;
     }
     // Livré non facturé : facturer le client est toujours proposé à côté
-    if ($toInvoice > 0 && $user->can('finance.manage') && !in_array($next['code'], ['source', 'issue_po', 'send_po'], true)) {
-        $inv = ['open' => '#tpl-inv-receivable', 'label' => t('orders.cta.invoice', ['amount' => fmt_money($toInvoice, $cur)]), 'icon' => 'file-up', 'title' => t('invoice.new_receivable')];
+    if ($toInvoice > 0 && $invoicableDeliveries && $user->can('finance.manage') && !in_array($next['code'], ['source', 'issue_po', 'send_po'], true)) {
+        $inv = ['open' => '#tpl-inv-dl-' . (int) $invoicableDeliveries[0]['id'], 'label' => t('orders.cta.invoice', ['amount' => fmt_money($toInvoice, $cur)]), 'icon' => 'file-up', 'title' => t('invoice.new_receivable') . ' ' . $invoicableDeliveries[0]['reference']];
         if (empty($cta['label']) || $next['code'] === 'close') {
             [$cta, $cta2] = [$inv, empty($cta['label']) ? null : $cta];
         } else {
@@ -622,12 +624,30 @@ $panel = fn (string $k) => '<div class="tabs__panel" role="tabpanel" id="panel-'
         <?php if ($open && $user->can('finance.manage')): ?>
             <div class="page-actions">
                 <?php if ($invoicablePos): ?><button type="button" class="btn btn--sm" data-open="#tpl-inv-payable" data-title="<?= e(t('invoice.new_payable')) ?>"><?= icon('file-down') ?> <?= e(t('invoice.new_payable')) ?></button><?php endif ?>
-                <button type="button" class="btn btn--sm btn--primary" data-open="#tpl-inv-receivable" data-title="<?= e(t('invoice.new_receivable')) ?>"><?= icon('file-up') ?> <?= e(t('invoice.new_receivable')) ?></button>
             </div>
         <?php endif ?>
     </div>
     <?php if ($toInvoice > 0 && $open): ?>
         <div class="alert alert--info"><?= icon('info') ?> <span><?= e(t('invoice.to_invoice', ['amount' => fmt_money($toInvoice, $cur)])) ?></span></div>
+    <?php endif ?>
+    <?php if ($open && $invoicableDeliveries): ?>
+        <!-- Facturation client par expédition : une facture par expédition livrée -->
+        <h3 class="subhead"><?= e(t('invoice.deliveries_to_invoice')) ?></h3>
+        <div class="table-wrap">
+        <table class="table table--compact">
+            <thead><tr><th><?= e(t('orders.col.reference')) ?></th><th><?= e(t('delivery.delivered_at')) ?></th><th class="num"><?= e(t('invoice.ctx.delivered')) ?></th><th class="actions-col"></th></tr></thead>
+            <tbody>
+            <?php foreach ($invoicableDeliveries as $dl): ?>
+                <tr>
+                    <td><a href="<?= e(url('/deliveries/' . (int) $dl['id'])) ?>"><strong><?= e($dl['reference']) ?></strong></a><br><span class="muted"><?= e($dl['po_reference'] . ' · ' . $dl['supplier_name']) ?></span></td>
+                    <td><?= e(fmt_date($dl['delivered_at'])) ?></td>
+                    <td class="num"><?= e(fmt_money($dl['invoice_value'], $cur)) ?></td>
+                    <td class="actions-col"><?php if ($user->can('finance.manage')): ?><button type="button" class="btn btn--sm btn--primary" data-open="#tpl-inv-dl-<?= (int) $dl['id'] ?>" data-title="<?= e(t('invoice.new_receivable') . ' ' . $dl['reference']) ?>"><?= icon('file-up') ?> <?= e(t('invoice.invoice_delivery')) ?></button><?php endif ?></td>
+                </tr>
+            <?php endforeach ?>
+            </tbody>
+        </table>
+        </div>
     <?php endif ?>
     <?php foreach (['receivable' => $receivables, 'payable' => $payables] as $dir => $list): ?>
         <h3 class="subhead"><?= e(t('invoice.dir.' . $dir)) ?></h3>
@@ -642,15 +662,25 @@ $panel = fn (string $k) => '<div class="tabs__panel" role="tabpanel" id="panel-'
                 $bal = (float) $inv['amount'] - (float) $inv['paid'];
                 $overdue = $inv['status'] === 'open' && $inv['due_date'] < $today; ?>
                 <tr>
-                    <td><strong><?= e($inv['reference']) ?></strong><?= $inv['external_number'] ? '<br><span class="muted">N° ' . e($inv['external_number']) . '</span>' : '' ?><?= $inv['po_reference'] ? '<br><span class="muted">' . e($inv['po_reference']) . '</span>' : '' ?></td>
+                    <td><strong><?= e($inv['reference']) ?></strong><?= $inv['external_number'] ? '<br><span class="muted">N° ' . e($inv['external_number']) . '</span>' : '' ?><?= $inv['po_reference'] ? '<br><span class="muted">' . e($inv['po_reference']) . '</span>' : '' ?><?= $inv['delivery_reference'] ? '<br><a class="muted" href="' . e(url('/deliveries/' . (int) $inv['delivery_id'])) . '">' . e($inv['delivery_reference']) . '</a>' : '' ?></td>
                     <td><?= e($inv['party_name']) ?></td>
                     <td class="<?= $overdue ? 'overdue' : '' ?>"><?= e(fmt_date($inv['due_date'])) ?><br><span class="muted"><?= e(t('invoice.col.date')) ?> <?= e(fmt_date($inv['invoice_date'])) ?></span></td>
-                    <td class="num"><?= e(fmt_money($inv['amount'], $inv['currency'])) ?></td>
+                    <td class="num"><?= e(fmt_money($inv['amount'], $inv['currency'])) ?><?= ($inv['vat_rate'] ?? null) !== null ? '<br><span class="muted">' . e(t('invoice.vat_included', ['rate' => fmt_number($inv['vat_rate']), 'amount' => fmt_number($inv['vat_amount'])])) . '</span>' : '' ?></td>
                     <td class="num" data-order="<?= e((string) (float) $inv['paid']) ?>"><?= e(fmt_number($inv['paid'])) ?>
                         <?php foreach ($inv['payments'] as $py): ?><span class="pay-line" title="<?= e(t('payment.method.' . $py['method']) . ($py['bank_ref'] ? ' · ' . $py['bank_ref'] : '')) ?>"><?= e(fmt_date($py['paid_at'])) ?> · <?= e(fmt_number($py['amount'])) ?><?= $py['bank_ref'] ? ' · ' . e($py['bank_ref']) : '' ?></span><?php endforeach ?></td>
                     <td class="num"><strong><?= $inv['status'] === 'cancelled' ? '—' : e(fmt_number($bal)) ?></strong></td>
                     <td><?= View::partial('partials/status_badge', ['key' => $overdue ? 'invoice.status.overdue' : 'invoice.status.' . $inv['status'], 'status' => $overdue ? 'overdue' : $inv['status']]) ?></td>
                     <td class="actions-col">
+                        <?php if ($dir === 'receivable'): ?><a class="icon-btn"<?= preview_attrs(url('/invoices/' . (int) $inv['id'] . '/print'), t('invoice.print.title') . ' — ' . $inv['reference'], null, 'html') ?> title="<?= e(t('invoice.print_btn')) ?>" aria-label="<?= e(t('invoice.print_btn')) ?>"><?= icon('printer') ?></a><?php endif ?>
+                        <?php if ($open && $inv['status'] === 'draft'): ?>
+                            <!-- En attente d'approbation : modification sur la fiche facture, puis approbation -->
+                            <?php if ($user->can('finance.manage')): ?><a class="icon-btn" href="<?= e(url('/invoices/' . (int) $inv['id'])) ?>" title="<?= e(t('invoice.edit')) ?>" aria-label="<?= e(t('invoice.edit')) ?>"><?= icon('pencil') ?></a><?php endif ?>
+                            <?php if ($user->canApproveInvoiceOf((int) $inv['created_by'])): ?>
+                                <form method="post" action="<?= e(url('/invoices/' . (int) $inv['id'] . '/approve')) ?>" class="inline" data-confirm="<?= e(t('invoice.approve_confirm', ['ref' => $inv['reference'], 'amount' => fmt_money($inv['amount'], $inv['currency'])])) ?>">
+                                    <?= csrf_field() ?><button class="btn btn--sm btn--primary"><?= icon('badge-check') ?> <?= e(t('invoice.approve')) ?></button>
+                                </form>
+                            <?php endif ?>
+                        <?php endif ?>
                         <?php if ($open && $inv['status'] === 'open' && $user->can('finance.manage')): ?>
                             <button type="button" class="btn btn--sm" data-open="#tpl-pay-<?= (int) $inv['id'] ?>" data-title="<?= e(t($dir === 'payable' ? 'invoice.pay' : 'invoice.collect') . ' ' . $inv['reference']) ?>"><?= icon('hand-coins') ?> <?= e(t($dir === 'payable' ? 'invoice.pay' : 'invoice.collect')) ?></button>
                             <?php if (!$inv['payments']): ?>
@@ -674,20 +704,12 @@ $panel = fn (string $k) => '<div class="tabs__panel" role="tabpanel" id="panel-'
     <?php endforeach ?>
 
     <?php if ($open && $user->can('finance.manage')): ?>
-    <template id="tpl-inv-receivable">
-        <form method="post" action="<?= e(url("/orders/$id/invoices")) ?>" class="form modal-form">
-            <?= csrf_field() ?>
-            <input type="hidden" name="direction" value="receivable">
-            <?= View::partial('partials/ref_field', ['type' => 'invoice_receivable', 'name' => 'reference', 'label' => t('reference.invoice')]) ?>
-            <p class="muted"><?= e(t('invoice.receivable_hint', ['amount' => fmt_money($toInvoice, $cur)])) ?></p>
-            <div class="form-grid form-grid--modal">
-                <div class="field"><label class="required"><?= e(t('invoice.col.date')) ?></label><input name="invoice_date" type="date" required value="<?= e($today) ?>"></div>
-                <div class="field"><label><?= e(t('invoice.col.due')) ?></label><input name="due_date" type="date"><p class="hint"><?= e(t('invoice.due_auto', ['n' => (int) $o['payment_terms_days']])) ?></p></div>
-            </div>
-            <div class="field"><label class="required"><?= e(t('orders.col.amount')) ?> (<?= e($cur) ?>)</label><input name="amount" type="number" step="0.01" min="0.01" required value="<?= $toInvoice > 0 ? e(number_format($toInvoice, 2, '.', '')) : '' ?>" inputmode="decimal"></div>
-            <div class="field"><label><?= e(t('movements.note')) ?></label><textarea name="notes" rows="2" maxlength="500"></textarea></div>
-        </form>
+    <?php foreach ($invoicableDeliveries as $dl): ?>
+    <template id="tpl-inv-dl-<?= (int) $dl['id'] ?>">
+        <?= View::partial('finance/_receivable_form', ['orderId' => $id, 'delivery' => $dl, 'currency' => $cur,
+            'terms' => (int) $o['payment_terms_days'], 'back' => '/orders/' . $id . '#finance']) ?>
     </template>
+    <?php endforeach ?>
     <?php if ($invoicablePos): ?>
     <template id="tpl-inv-payable">
         <form method="post" action="<?= e(url("/orders/$id/invoices")) ?>" class="form modal-form">

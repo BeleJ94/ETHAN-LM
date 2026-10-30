@@ -124,10 +124,20 @@ final class CockpitRepository
         }
         // Factures échues
         if ($user->can('finance.view')) {
-            foreach ($this->rows("SELECT i.id, i.reference, i.order_id, DATEDIFF(CURDATE(), i.due_date) AS days FROM invoices i JOIN customer_orders o ON o.id = i.order_id
+            // Rubrique du menu selon le sens : factures clients (à encaisser) / fournisseurs (à payer)
+            foreach ($this->rows("SELECT i.id, i.reference, i.direction, DATEDIFF(CURDATE(), i.due_date) AS days FROM invoices i JOIN customer_orders o ON o.id = i.order_id
                 WHERE i.status = 'open' AND i.due_date < CURDATE() {S} ORDER BY i.due_date LIMIT 20") as $r) {
-                $add('finance', 'bad', 'banknote', t('cockpit.todo.invoice_overdue', ['days' => (int) $r['days']]), $r['reference'],
-                    url('/orders/' . (int) $r['order_id']) . '#finance', t('cockpit.cta.open'), 10);
+                $add($r['direction'] === 'receivable' ? 'receivables' : 'payables', 'bad', 'banknote', t('cockpit.todo.invoice_overdue', ['days' => (int) $r['days']]), $r['reference'],
+                    url('/invoices/' . (int) $r['id']), t('cockpit.cta.open'), 10);
+            }
+        }
+        // Factures clients à approuver (approbateur habilité, hors factures qu'il a lui-même émises)
+        if ($user->can('finance.approve')) {
+            foreach ($this->rows("SELECT i.id, i.reference, i.amount, i.currency, c.name AS customer FROM invoices i JOIN customer_orders o ON o.id = i.order_id
+                JOIN customers c ON c.id = i.customer_id
+                WHERE i.status = 'draft'" . ($user->role === \App\Security\Role::Admin ? '' : ' AND i.created_by <> ' . (int) $user->id) . " AND o.status NOT IN ('closed','cancelled') {S} ORDER BY i.created_at LIMIT 20") as $r) {
+                $add('receivables', 'warn', 'badge-check', t('cockpit.todo.invoice_to_approve'), $r['reference'] . ' · ' . $r['customer'] . ' · ' . fmt_money($r['amount'], $r['currency']),
+                    url('/invoices/' . (int) $r['id']), t('cockpit.cta.approve'), 5);
             }
         }
         // Documents obligatoires manquants ou rejetés (dossiers et expéditions encore ouverts) : une ligne par expédition / dossier

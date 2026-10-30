@@ -47,9 +47,13 @@ if ($open) {
     } elseif ($st === 'in_transit') {
         $next = ['code' => 'receive', 'tone' => 'neutral'];
         $cta = $canManage ? ['open' => '#tpl-confirm', 'label' => t('delivery.confirm'), 'icon' => 'package-check', 'title' => t('delivery.confirm') . ' ' . $d['reference']] : [];
-    } elseif ($st === 'delivered') {
+    } elseif ($st === 'delivered' && $d['invoice_id'] === null) {
+        // Facturation client par expédition : la facture se fait depuis cette fiche
         $next = ['code' => 'invoice', 'tone' => 'success'];
-        $cta = $user->can('finance.manage') ? ['href' => url('/orders/' . (int) $d['order_id']) . '#finance', 'label' => t('delivery.cta.invoice'), 'icon' => 'file-up'] : [];
+        $cta = $user->can('finance.manage') ? ['open' => '#tpl-invoice', 'label' => t('delivery.cta.invoice'), 'icon' => 'file-up', 'title' => t('invoice.new_receivable') . ' ' . $d['reference']] : [];
+    } elseif ($st === 'delivered') {
+        $next = ['code' => 'invoiced', 'tone' => 'success'];
+        $cta = $user->can('finance.view') ? ['href' => url('/invoices/' . (int) $d['invoice_id']), 'label' => t('delivery.cta.see_invoice', ['ref' => $d['invoice_reference']]), 'icon' => 'file-text'] : [];
     }
 }
 $alerts = [];
@@ -341,3 +345,9 @@ $avLabel = fn (array $a) => $a['decision_number'] ?: $a['reference'];
 </template>
 <?php endif ?>
 </div>
+<?php if ($open && $st === 'delivered' && $d['invoice_id'] === null && $user->can('finance.manage')): ?>
+<template id="tpl-invoice">
+    <?= View::partial('finance/_receivable_form', ['orderId' => (int) $d['order_id'], 'delivery' => $d, 'currency' => $d['order_currency'],
+        'terms' => (int) $d['payment_terms_days'], 'back' => '/deliveries/' . $id]) ?>
+</template>
+<?php endif ?>

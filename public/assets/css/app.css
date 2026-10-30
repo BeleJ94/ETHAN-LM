@@ -292,6 +292,14 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--a
 
 /* SweetAlert2 : formulaires en modale */
 .swal-form .modal-form { text-align: left; display: flex; flex-direction: column; gap: var(--space-3); }
+.swal2-popup.swal-form.swal-wide { width: min(880px, calc(100vw - 32px)); }
+.swal-wide .lines input { width: 100%; }
+.swal-wide .lines .hint { display: block; margin-top: 2px; }
+.form-grid--modal .field--span { grid-column: 1 / -1; }
+.vat-field { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3) var(--space-5); }
+.vat-field .checkbox { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; }
+.vat-field__rate { display: inline-flex; align-items: center; gap: 6px; }
+.vat-field__rate input { width: 90px; }
 .swal2-popup { font-family: var(--font); border-radius: var(--radius-lg); }
 .swal2-title { font-size: 1.125rem !important; }
 

@@ -33,7 +33,7 @@
         delivered: 'available', paid: 'available', closed: 'available',
         sourcing: 'maintenance', ordered: 'maintenance', sent: 'maintenance', in_delivery: 'maintenance',
         received: 'waiting_part', partial: 'waiting_part', open: 'waiting_part', awaiting_licence: 'waiting_part', inspection: 'maintenance', blocked: 'breakdown',
-        overdue: 'breakdown', cancelled: 'immobilized',
+        overdue: 'breakdown', cancelled: 'immobilized', draft: 'waiting_part',
     };
     const badge = (status, label) => '<span class="badge badge--' + (STATUS_BADGE[status] || 'neutral') + '">' + esc(label) + '</span>';
 
@@ -46,6 +46,82 @@
 
         // Couleurs de statut pour l'export Excel (mêmes teintes que les pastilles)
         const DELIVERY_FILL = { planned: 'FCEFE3', in_transit: 'E8EEF4', delivered: 'E7F3EC', cancelled: 'EEEFF0' };
+
+        /** Colonnes communes aux factures clients et fournisseurs. */
+        const invoiceCol = {
+            // Fournisseur : notre référence interne + n° de la facture du fournisseur en évidence
+            reference: (supplier) => ({
+                data: 'reference', title: t(supplier ? 'js.col.supplier_invoice' : 'orders.col.reference'), orderable: true, locked: true,
+                html: (r) => (supplier && r.external_number
+                    ? '<span class="nowrap"><strong>' + esc(r.external_number) + '</strong></span><br><span class="muted">' + esc(r.reference) + '</span>'
+                    : '<span class="nowrap"><strong>' + esc(r.reference) + '</strong></span>'),
+                text: (r) => (supplier && r.external_number ? r.external_number + ' (' + r.reference + ')' : r.reference),
+            }),
+            party: (title) => ({
+                data: 'party', title, orderable: true,
+                html: (r) => '<span class="nowrap">' + esc(r.party_name) + '</span>',
+                text: (r) => r.party_name,
+            }),
+            order: () => ({
+                data: 'order', title: t('invoice.col.order'), orderable: true,
+                html: (r) => '<span class="nowrap">' + esc(r.order_reference) + '</span><br><span class="muted">' + esc(r.customer_po_number) + '</span>',
+                text: (r) => r.order_reference,
+            }),
+            site: () => ({
+                data: 'site', title: t('orders.col.site'), orderable: true, visible: false,
+                html: (r) => '<span class="mono">' + esc(r.site) + '</span>',
+                text: (r) => r.site,
+            }),
+            date: () => ({
+                data: 'invoice_date', title: t('invoice.col.date'), orderable: true,
+                html: (r) => '<span class="nowrap">' + esc(core.formatDate(r.invoice_date)) + '</span>',
+                text: (r) => r.invoice_date, type: 'date',
+            }),
+            // Échéance : compte à rebours tant que la facture est à régler
+            due: () => ({
+                data: 'due_date', title: t('invoice.col.due'), orderable: true,
+                html: (r) => {
+                    const date = '<span class="muted">' + esc(core.formatDate(r.due_date)) + '</span>';
+                    if (r.days_left === null) return '<span class="nowrap">' + date + '</span>';
+                    const d = Number(r.days_left);
+                    const tone = d < 0 ? 'late' : d <= 7 ? 'soon' : 'ok';
+                    const label = d < 0 ? t('js.due.late', { n: -d }) : d === 0 ? t('js.due.today') : t('js.due.left', { n: d });
+                    return '<span class="nowrap"><span class="due due--' + tone + '">' + esc(label) + '</span> ' + date + '</span>';
+                },
+                text: (r) => r.due_date, type: 'date',
+            }),
+            amount: (title) => ({
+                data: 'amount', title, orderable: true, className: 'num',
+                html: (r) => '<span class="nowrap">' + esc(money(r.amount)) + ' <span class="muted">' + esc(r.currency) + '</span></span>',
+                text: (r) => Number(r.amount), type: 'money',
+            }),
+            paid: (title) => ({
+                data: 'paid', title, orderable: true, className: 'num', visible: false,
+                html: (r) => (Number(r.paid) > 0 ? '<span class="nowrap">' + esc(money(r.paid)) + '</span>' : '<span class="muted">—</span>'),
+                text: (r) => Number(r.paid), type: 'money',
+            }),
+            balance: () => ({
+                data: 'balance', title: t('invoice.col.balance'), orderable: true, className: 'num',
+                html: (r) => {
+                    if (r.status === 'cancelled') return '<span class="muted">—</span>';
+                    const paidPct = Number(r.amount) > 0 ? Math.min(100, Math.floor(Number(r.paid) / Number(r.amount) * 100)) : 0;
+                    return '<span class="nowrap"><strong>' + esc(money(r.balance)) + '</strong></span>'
+                        + (paidPct > 0 && paidPct < 100 ? '<br><span class="muted">' + esc(t('js.paid_pct', { n: paidPct })) + '</span>' : '');
+                },
+                text: (r) => (r.status === 'cancelled' ? 0 : Number(r.balance)), type: 'money',
+            }),
+            status: () => ({
+                data: 'status', title: t('common.status'), orderable: true,
+                html: (r) => (Number(r.overdue) ? badge('overdue', t('invoice.status.overdue')) : badge(r.status, t('invoice.status.' + r.status))),
+                text: (r) => t(Number(r.overdue) ? 'invoice.status.overdue' : 'invoice.status.' + r.status),
+            }),
+            people: (title) => ({
+                data: 'created_by', title, orderable: true, visible: false,
+                html: (r) => '<span class="nowrap">' + esc(r.created_by_name) + '</span>'
+                    + (r.approved_by_name ? '<br><span class="muted">' + esc(t('js.approved_by', { name: r.approved_by_name })) + '</span>' : ''),
+                text: (r) => r.created_by_name + (r.approved_by_name ? ' / ' + r.approved_by_name : ''),
+            }),
+        };
 
         return {
             /* Liste des expéditions (tableau serveur). visible: false = colonne proposée dans « Colonnes » mais masquée par défaut. */
@@ -236,42 +312,55 @@
                 },
             ],
 
-            invoices: [
+            // Factures clients (à encaisser) : expédition facturée, HT / TVA / TTC, approbation
+            invoices_receivable: [
+                invoiceCol.reference(false),
+                invoiceCol.party(t('orders.col.customer')),
+                invoiceCol.order(),
                 {
-                    data: 'reference', title: t('orders.col.reference'), orderable: true,
-                    html: (r) => '<strong>' + esc(r.reference) + '</strong>' + (r.external_number ? '<br><span class="muted">N° ' + esc(r.external_number) + '</span>' : ''),
-                    text: (r) => r.reference,
+                    data: 'delivery', title: t('js.col.shipment'), orderable: true,
+                    html: (r) => (r.delivery_reference ? '<span class="nowrap">' + esc(r.delivery_reference) + '</span>' : '<span class="muted">—</span>'),
+                    text: (r) => r.delivery_reference || '',
+                },
+                invoiceCol.site(),
+                invoiceCol.date(),
+                invoiceCol.due(),
+                {
+                    data: 'subtotal', title: t('js.col.subtotal'), orderable: true, className: 'num',
+                    html: (r) => '<span class="nowrap">' + esc(money(r.subtotal)) + '</span>',
+                    text: (r) => Number(r.subtotal), type: 'money',
                 },
                 {
-                    data: 'party', title: t('invoice.col.party'), orderable: true,
-                    html: (r) => esc(r.party_name) + '<br><span class="muted">' + esc(t('invoice.dir.' + r.direction)) + '</span>',
-                    text: (r) => r.party_name,
+                    data: 'vat', title: t('js.col.vat'), orderable: true, className: 'num',
+                    html: (r) => (r.vat_rate === null ? '<span class="muted">—</span>'
+                        : '<span class="nowrap">' + esc(money(r.vat_amount)) + '</span><br><span class="muted">' + esc(money(r.vat_rate)) + ' %</span>'),
+                    text: (r) => Number(r.vat_amount), type: 'money',
                 },
+                invoiceCol.amount(t('js.col.amount_ttc')),
+                invoiceCol.paid(t('js.col.collected')),
+                invoiceCol.balance(),
+                invoiceCol.status(),
+                invoiceCol.people(t('js.col.issued_by')),
+            ],
+
+            // Factures fournisseurs (à payer) : n° de la facture du fournisseur, PO fournisseur
+            invoices_payable: [
+                invoiceCol.reference(true),
+                invoiceCol.party(t('js.col.supplier')),
                 {
-                    data: 'order', title: t('invoice.col.order'), orderable: true,
-                    html: (r) => esc(r.order_reference),
-                    text: (r) => r.order_reference,
+                    data: 'po', title: t('js.col.supplier_po'), orderable: true,
+                    html: (r) => (r.po_reference ? '<span class="nowrap">' + esc(r.po_reference) + '</span>' : '<span class="muted">—</span>'),
+                    text: (r) => r.po_reference || '',
                 },
-                {
-                    data: 'due_date', title: t('invoice.col.due'), orderable: true,
-                    html: (r) => (Number(r.overdue) ? '<span class="overdue">' : '<span>') + esc(core.formatDate(r.due_date)) + '</span>',
-                    text: (r) => r.due_date, type: 'date',
-                },
-                {
-                    data: 'amount', title: t('orders.col.amount'), orderable: true, className: 'num',
-                    html: (r) => esc(money(r.amount)) + ' <span class="muted">' + esc(r.currency) + '</span>',
-                    text: (r) => Number(r.amount), type: 'money',
-                },
-                {
-                    data: 'balance', title: t('invoice.col.balance'), orderable: true, className: 'num',
-                    html: (r) => (r.status === 'cancelled' ? '—' : '<strong>' + esc(money(r.balance)) + '</strong>'),
-                    text: (r) => (r.status === 'cancelled' ? 0 : Number(r.balance)), type: 'money',
-                },
-                {
-                    data: 'status', title: t('common.status'), orderable: false,
-                    html: (r) => (Number(r.overdue) ? badge('overdue', t('invoice.status.overdue')) : badge(r.status, t('invoice.status.' + r.status))),
-                    text: (r) => t(Number(r.overdue) ? 'invoice.status.overdue' : 'invoice.status.' + r.status),
-                },
+                invoiceCol.order(),
+                invoiceCol.site(),
+                invoiceCol.date(),
+                invoiceCol.due(),
+                invoiceCol.amount(t('orders.col.amount')),
+                invoiceCol.paid(t('js.col.paid_out')),
+                invoiceCol.balance(),
+                invoiceCol.status(),
+                invoiceCol.people(t('js.col.recorded_by')),
             ],
 
             items: [

@@ -42,13 +42,26 @@ $ctx = $inv['context'];
         </p>
     </div>
     <div class="hero__actions">
+        <?php if ($receivable): ?><a class="btn"<?= preview_attrs(url("/invoices/$id/print"), t('invoice.print.title') . ' — ' . $inv['reference'], null, 'html') ?>><?= icon('printer') ?> <?= e(t('invoice.print_btn')) ?></a><?php endif ?>
+        <?php if ($inv['status'] === 'draft' && $open): ?>
+            <?php if ($canManage && $delivery): ?><button type="button" class="btn" data-open="#tpl-edit" data-title="<?= e(t('invoice.edit') . ' ' . $inv['reference']) ?>"><?= icon('pencil') ?> <?= e(t('invoice.edit')) ?></button><?php endif ?>
+            <?php if ($user->canApproveInvoiceOf((int) $inv['created_by'])): ?>
+                <form method="post" action="<?= e(url("/invoices/$id/approve")) ?>" class="inline" data-confirm="<?= e(t('invoice.approve_confirm', ['ref' => $inv['reference'], 'amount' => fmt_money($amount, $cur)])) ?>">
+                    <?= csrf_field() ?><input type="hidden" name="back" value="invoice">
+                    <button class="btn btn--primary"><?= icon('badge-check') ?> <?= e(t('invoice.approve')) ?></button>
+                </form>
+            <?php else: ?>
+                <span class="chip" title="<?= e(t('invoice.awaiting_approver_hint')) ?>"><?= icon('hourglass') ?> <?= e(t('invoice.awaiting_approver')) ?></span>
+            <?php endif ?>
+            <?php if ($canManage): ?><button type="button" class="icon-btn icon-btn--danger" data-open="#tpl-icancel" data-title="<?= e(t('invoice.cancel')) ?>" title="<?= e(t('invoice.cancel')) ?>" aria-label="<?= e(t('invoice.cancel')) ?>"><?= icon('ban') ?></button><?php endif ?>
+        <?php endif ?>
         <?php if ($canManage && $inv['status'] === 'open'): ?>
             <button type="button" class="btn btn--primary" data-open="#tpl-pay" data-title="<?= e(t($receivable ? 'invoice.collect' : 'invoice.pay') . ' ' . $inv['reference']) ?>"><?= icon('hand-coins') ?> <?= e(t($receivable ? 'invoice.collect' : 'invoice.pay')) ?></button>
             <?php if (!$inv['payments']): ?>
                 <button type="button" class="icon-btn icon-btn--danger" data-open="#tpl-icancel" data-title="<?= e(t('invoice.cancel')) ?>" title="<?= e(t('invoice.cancel')) ?>" aria-label="<?= e(t('invoice.cancel')) ?>"><?= icon('ban') ?></button>
             <?php endif ?>
         <?php endif ?>
-        <a class="btn" href="<?= e(url('/finance')) ?>"><?= icon('arrow-left') ?> <?= e(t('nav.finance')) ?></a>
+        <a class="btn" href="<?= e(url($receivable ? '/finance/customers' : '/finance/suppliers')) ?>"><?= icon('arrow-left') ?> <?= e(t($receivable ? 'nav.invoices_customers' : 'nav.invoices_suppliers')) ?></a>
     </div>
 </section>
 
@@ -64,6 +77,33 @@ $ctx = $inv['context'];
 
 <div class="grid grid--2-1">
     <div>
+        <?php if ($inv['lines']): ?>
+        <section class="card" id="lines">
+            <div class="card__title"><h2><?= icon('list-ordered', 'title-icon') ?> <?= e(t('invoice.lines')) ?></h2></div>
+            <div class="table-wrap">
+            <table class="table">
+                <thead><tr><th><?= e(t('invoice.line.description')) ?></th><th class="num"><?= e(t('movements.col.quantity')) ?></th><th class="num"><?= e(t('orders.col.unit_price')) ?></th><th class="num"><?= e(t('orders.col.amount')) ?></th></tr></thead>
+                <tbody>
+                <?php foreach ($inv['lines'] as $l): ?>
+                    <tr>
+                        <td><?= e($l['description']) ?><?= $l['delivery_line_id'] === null ? ' <span class="chip">' . e(t('invoice.line.free')) . '</span>' : '' ?></td>
+                        <td class="num"><?= e(fmt_qty($l['quantity'])) ?> <?= e((string) $l['unit']) ?></td>
+                        <td class="num"><?= e(fmt_number($l['unit_price'])) ?></td>
+                        <td class="num"><?= e(fmt_number($l['amount'])) ?></td>
+                    </tr>
+                <?php endforeach ?>
+                </tbody>
+                <tfoot>
+                    <?php if ($inv['vat_rate'] !== null): ?>
+                    <tr><th colspan="3"><?= e(t('invoice.total_ht')) ?></th><th class="num"><?= e(fmt_money($inv['subtotal'], $cur)) ?></th></tr>
+                    <tr><th colspan="3"><?= e(t('invoice.vat')) ?> (<?= e(fmt_number($inv['vat_rate'])) ?> %)</th><th class="num"><?= e(fmt_money($inv['vat_amount'], $cur)) ?></th></tr>
+                    <?php endif ?>
+                    <tr><th colspan="3"><?= e(t($inv['vat_rate'] !== null ? 'invoice.total_ttc' : 'common.total')) ?></th><th class="num"><?= e(fmt_money($inv['amount'], $cur)) ?></th></tr>
+                </tfoot>
+            </table>
+            </div>
+        </section>
+        <?php endif ?>
         <section class="card" id="payments">
             <div class="card__title">
                 <h2><?= icon('list', 'title-icon') ?> <?= e(t('invoice.payments')) ?></h2>
@@ -123,6 +163,7 @@ $ctx = $inv['context'];
         <section class="card">
             <div class="card__title"><h2><?= icon('scale', 'title-icon') ?> <?= e(t('invoice.context')) ?></h2></div>
             <dl class="dl">
+                <?php if ($inv['delivery_reference']): ?><dt><?= e(t('invoice.delivery')) ?></dt><dd><a href="<?= e(url('/deliveries/' . (int) $inv['delivery_ref_id'])) ?>"><?= e($inv['delivery_reference']) ?></a></dd><?php endif ?>
                 <dt><?= e(t($receivable ? 'invoice.ctx.ordered' : 'invoice.ctx.po_amount')) ?></dt><dd><?= e(fmt_money($ctx['ordered_value'], $receivable ? $inv['order_currency'] : $cur)) ?></dd>
                 <?php if ($receivable): ?><dt><?= e(t('invoice.ctx.delivered')) ?></dt><dd><?= e(fmt_money($ctx['delivered_value'], $inv['order_currency'])) ?></dd><?php endif ?>
                 <dt><?= e(t('invoice.ctx.invoiced')) ?></dt><dd><?= e(fmt_money($ctx['invoiced_value'], $cur)) ?></dd>
@@ -130,6 +171,7 @@ $ctx = $inv['context'];
                     <dt><?= e(t('invoice.ctx.to_invoice')) ?></dt><dd class="<?= $left > 0.01 ? 'text-warn' : '' ?>"><?= e(fmt_money(max(0, $left), $inv['order_currency'])) ?></dd>
                 <?php endif ?>
                 <dt><?= e(t('invoice.ctx.created')) ?></dt><dd><?= e($inv['created_by_name']) ?> · <?= e(fmt_date($inv['created_at'], true)) ?></dd>
+                <?php if ($inv['approved_at']): ?><dt><?= e(t('invoice.ctx.approved')) ?></dt><dd><?= e((string) $inv['approved_by_name']) ?> · <?= e(fmt_date($inv['approved_at'], true)) ?></dd><?php elseif ($inv['status'] === 'draft'): ?><dt><?= e(t('invoice.ctx.approved')) ?></dt><dd class="text-warn"><?= e(t('invoice.status.draft')) ?></dd><?php endif ?>
             </dl>
         </section>
 
@@ -155,8 +197,12 @@ $ctx = $inv['context'];
     </div>
 </div>
 
-<?php if ($canManage && $inv['status'] === 'open'): ?>
-<template id="tpl-pay"><?= View::partial('finance/_payment_form', ['inv' => $inv, 'balance' => $balance, 'back' => 'invoice']) ?></template>
+<?php if ($canManage && $inv['status'] === 'draft' && $delivery): ?>
+<template id="tpl-edit"><?= View::partial('finance/_receivable_form', ['orderId' => (int) $inv['order_id'], 'delivery' => $delivery, 'invoice' => $inv,
+    'currency' => $cur, 'terms' => (int) $inv['order_terms'], 'back' => '/invoices/' . $id]) ?></template>
+<?php endif ?>
+<?php if ($canManage && in_array($inv['status'], ['draft', 'open'], true)): ?>
+<?php if ($inv['status'] === 'open'): ?><template id="tpl-pay"><?= View::partial('finance/_payment_form', ['inv' => $inv, 'balance' => $balance, 'back' => 'invoice']) ?></template><?php endif ?>
 <template id="tpl-icancel">
     <form method="post" action="<?= e(url("/invoices/$id/cancel")) ?>" class="form modal-form" data-confirm-variant="danger">
         <?= csrf_field() ?>

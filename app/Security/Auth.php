@@ -46,7 +46,7 @@ final class Auth
             return null;
         }
         $pdo = Database::pdo();
-        $stmt = $pdo->prepare('SELECT id, name, email, role, forwarder_id FROM users WHERE id = ? AND active = 1');
+        $stmt = $pdo->prepare('SELECT id, name, email, role, forwarder_id, invoice_approver FROM users WHERE id = ? AND active = 1');
         $stmt->execute([$id]);
         $row = $stmt->fetch();
         if (!$row) {
@@ -62,6 +62,7 @@ final class Auth
             Role::from($row['role']),
             array_map('intval', $sites->fetchAll(\PDO::FETCH_COLUMN)),
             $row['forwarder_id'] !== null ? (int) $row['forwarder_id'] : null,
+            (bool) $row['invoice_approver'],
         );
     }
 

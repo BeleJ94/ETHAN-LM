@@ -16,7 +16,7 @@ use App\Security\Auth;
 final class CompanySettings
 {
     public const FIELDS = ['name', 'legal_form', 'address', 'city', 'country', 'phone', 'email', 'website',
-        'rccm', 'id_nat', 'nif', 'vat_number', 'importer_number', 'share_capital'];
+        'rccm', 'id_nat', 'nif', 'vat_number', 'importer_number', 'share_capital', 'bank_details', 'invoice_terms', 'vat_rate'];
     public const LOGO_MAX_BYTES = 1024 * 1024;
     public const LOGO_MIME = ['image/png', 'image/jpeg', 'image/webp'];
 

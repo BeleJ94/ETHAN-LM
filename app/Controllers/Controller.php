@@ -60,7 +60,7 @@ abstract class Controller
     protected static function backTo(mixed $back, string $default): string
     {
         $back = is_string($back) ? $back : '';
-        return preg_match('~^/(orders|purchase-orders|deliveries|licences)/\d+(#[a-z-]+)?$~', $back) ? $back : $default;
+        return preg_match('~^/(orders|purchase-orders|deliveries|licences|invoices)/\d+(#[a-z-]+)?$~', $back) ? $back : $default;
     }
 
     /** Règle métier refusée : message traduit en flash, retour à la page d'origine. */

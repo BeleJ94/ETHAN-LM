@@ -102,7 +102,8 @@ final class PurchaseOrderRepository
         [$scope, $params] = $scoped ? SiteScope::clause('o.site_id') : ['', []];
         $stmt = Database::pdo()->prepare('SELECT d.*, p.reference AS po_reference, p.delivery_address, p.delivery_contact,
                 s.name AS supplier_name, o.reference AS order_reference, o.customer_po_number, o.fulfillment_mode, o.status AS order_status,
-                c.name AS customer_name, fw.name AS forwarder_name
+                c.name AS customer_name, fw.name AS forwarder_name, o.currency AS order_currency, o.payment_terms_days,
+                ' . OrderRepository::DELIVERY_INVOICE_SQL . '
             FROM deliveries d JOIN purchase_orders p ON p.id = d.po_id JOIN suppliers s ON s.id = p.supplier_id
             JOIN customer_orders o ON o.id = d.order_id JOIN customers c ON c.id = o.customer_id
             LEFT JOIN customs_agencies fw ON fw.id = COALESCE(d.forwarder_id, p.forwarder_id)
@@ -112,7 +113,7 @@ final class PurchaseOrderRepository
         if (!$d) {
             return null;
         }
-        $lines = Database::pdo()->prepare('SELECT dl.*, i.sku, i.name AS item_name, u.code AS unit, col.specification FROM delivery_lines dl
+        $lines = Database::pdo()->prepare('SELECT dl.*, pl.item_id, i.sku, i.name AS item_name, u.code AS unit, col.specification, col.unit_price AS sale_price FROM delivery_lines dl
             JOIN purchase_order_lines pl ON pl.id = dl.po_line_id JOIN customer_order_lines col ON col.id = pl.order_line_id
             JOIN items i ON i.id = pl.item_id JOIN units u ON u.id = i.unit_id WHERE dl.delivery_id = ?');
         $lines->execute([$id]);
