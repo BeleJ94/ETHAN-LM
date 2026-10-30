@@ -26,6 +26,7 @@ use App\Controllers\PurchaseOrderController;
 use App\Controllers\ReferenceController;
 use App\Controllers\ShipmentDocumentController;
 use App\Controllers\SiteController;
+use App\Controllers\StatementController;
 use App\Controllers\SupplierController;
 use App\Controllers\UserController;
 use App\Controllers\WarehouseController;
@@ -203,6 +204,9 @@ return static function (Router $r): void {
     $r->get('/finance/customers', [InvoiceController::class, 'customers']);
     $r->get('/finance/suppliers', [InvoiceController::class, 'suppliers']);
     $r->get('/finance/data', [InvoiceController::class, 'data']);
+    // Relevés de tiers (A4) et balance âgée
+    $r->get('/finance/statements', [StatementController::class, 'page']);
+    $r->get('/finance/statement', [StatementController::class, 'show']);
     $r->post('/orders/{id}/invoices', [InvoiceController::class, 'store']);
     $r->post('/orders/{id}/invoices/preview', [InvoiceController::class, 'preview']);
     $r->get('/invoices/{id}', [InvoiceController::class, 'show']);

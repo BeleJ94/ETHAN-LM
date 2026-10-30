@@ -23,6 +23,9 @@ $id = (int) $p['id'];
         </p>
     </div>
     <div class="hero__actions">
+        <?php if ($user->can('finance.view')): ?>
+            <a class="btn" href="<?= e(url('/finance/statements', ['direction' => $type === 'customer' ? 'receivable' : 'payable', 'party_id' => $id])) ?>"><?= icon('scroll-text') ?> <?= e(t('statement.button')) ?></a>
+        <?php endif ?>
         <?php if ($type === 'customer' && $user->can('orders.manage')): ?>
             <a class="btn btn--primary" href="<?= e(url('/orders/new', ['customer_id' => $id])) ?>"><?= icon('plus') ?> <?= e(t('orders.new')) ?></a>
         <?php endif ?>

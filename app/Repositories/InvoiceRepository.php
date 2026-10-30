@@ -66,6 +66,8 @@ final class InvoiceRepository
                 COALESCE(i.subtotal, i.amount) AS subtotal, i.vat_rate, i.vat_amount, i.amount, i.status, i.order_id, i.created_at,
                 o.reference AS order_reference, o.customer_po_number, st.code AS site, COALESCE(c.name, s.name) AS party_name,
                 dv.reference AS delivery_reference, p.reference AS po_reference, uc.name AS created_by_name, ua.name AS approved_by_name,
+                (SELECT a.id FROM attachments a WHERE a.entity = \'invoice\' AND a.entity_id = i.id ORDER BY a.id DESC LIMIT 1) AS attachment_id,
+                (SELECT a.mime FROM attachments a WHERE a.entity = \'invoice\' AND a.entity_id = i.id ORDER BY a.id DESC LIMIT 1) AS attachment_mime,
                 ' . self::PAID_SQL . ' AS paid, i.amount - ' . self::PAID_SQL . ' AS balance,
                 (i.status = \'open\' AND i.due_date < CURDATE()) AS overdue,
                 CASE WHEN i.status = \'open\' THEN DATEDIFF(i.due_date, CURDATE()) END AS days_left '

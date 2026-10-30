@@ -20,7 +20,9 @@ $actions = '<div class="dropdown">'
     . '<div class="menu" data-menu role="menu" hidden>'
     . '<button type="button" class="menu__item" role="menuitem" data-export="excel" data-export-table="' . $table . '" data-export-title="' . e($title) . '">' . icon('file-spreadsheet') . ' Excel</button>'
     . '<button type="button" class="menu__item" role="menuitem" data-export="pdf" data-export-table="' . $table . '" data-export-title="' . e($title) . '">' . icon('file-text') . ' PDF</button>'
-    . '</div></div>';
+    . '</div></div>'
+    // Relevés : un tiers (relevé de compte / échéancier) ou tous (balance âgée)
+    . '<a class="btn btn--primary" href="' . e(url('/finance/statements', ['direction' => $direction])) . '">' . icon('scroll-text') . ' ' . e(t('statement.button_many')) . '</a>';
 echo View::partial('partials/page_header', ['icon' => $rec ? 'file-up' : 'file-down', 'heading' => $title,
     'meta' => t($rec ? 'finance.meta_customers' : 'finance.meta_suppliers'), 'actions' => $actions]);
 $fmt = function (string $k) use ($outstanding): string {
@@ -45,20 +47,23 @@ $tabs = ($rec ? ['draft' => ['finance.tab.draft', $counts['draft'] ?? 0, 'warn']
 ];
 ?>
 <section class="kpis kpis--compact">
-    <button type="button" class="kpi kpi--button" data-set-filters='{"status":"open"}'>
+    <button type="button" class="kpi kpi--button" data-drill="invoices" data-drill-param="<?= $direction ?>:open" data-drill-title="<?= e($title) ?>" title="<?= e(t('finance.kpi.detail_hint')) ?>">
         <span class="kpi__label"><?= e(t($rec ? 'finance.kpi.receivable' : 'finance.kpi.payable')) ?></span><span class="kpi__value kpi__value--sm"><?= e($fmt('open')) ?></span>
         <span class="kpi__hint"><?= e(t($rec ? 'finance.kpi.receivable_hint' : 'finance.kpi.payable_hint')) ?></span></button>
-    <button type="button" class="kpi kpi--button<?= $hasOverdue ? ($rec ? ' kpi--alert' : ' kpi--warn') : '' ?>" data-set-filters='{"status":"overdue"}'>
+    <button type="button" class="kpi kpi--button<?= $hasOverdue ? ($rec ? ' kpi--alert' : ' kpi--warn') : '' ?>" data-drill="invoices" data-drill-param="<?= $direction ?>:overdue" data-drill-title="<?= e($title) ?>" title="<?= e(t('finance.kpi.detail_hint')) ?>">
         <span class="kpi__label"><?= e(t($rec ? 'finance.kpi.receivable_overdue' : 'finance.kpi.payable_overdue')) ?></span><span class="kpi__value kpi__value--sm"><?= e($fmt('overdue')) ?></span>
         <span class="kpi__hint"><?= e(t('finance.kpi.overdue_hint')) ?></span></button>
     <?php if ($rec): ?>
-    <button type="button" class="kpi kpi--button<?= ($counts['draft'] ?? 0) ? ' kpi--warn' : '' ?>" data-set-filters='{"status":"draft"}'>
+    <button type="button" class="kpi kpi--button<?= ($counts['draft'] ?? 0) ? ' kpi--warn' : '' ?>" data-drill="invoices" data-drill-param="<?= $direction ?>:draft" data-drill-title="<?= e($title) ?>" title="<?= e(t('finance.kpi.detail_hint')) ?>">
         <span class="kpi__label"><?= e(t('finance.tab.draft')) ?></span><span class="kpi__value kpi__value--sm"><?= (int) ($counts['draft'] ?? 0) ?></span>
         <span class="kpi__hint"><?= e(t('finance.kpi.draft_hint')) ?></span></button>
     <?php endif ?>
-    <button type="button" class="kpi kpi--button" data-set-filters='{"status":"due_soon"}'>
+    <button type="button" class="kpi kpi--button" data-drill="invoices" data-drill-param="<?= $direction ?>:due_soon" data-drill-title="<?= e($title) ?>" title="<?= e(t('finance.kpi.detail_hint')) ?>">
         <span class="kpi__label"><?= e(t('finance.tab.due_soon')) ?></span><span class="kpi__value kpi__value--sm"><?= (int) ($counts['due_soon'] ?? 0) ?></span>
         <span class="kpi__hint"><?= e(t('finance.kpi.due_soon_hint')) ?></span></button>
+    <button type="button" class="kpi kpi--button" data-drill="aging" data-drill-param="<?= $direction ?>" data-drill-title="<?= e(t('statement.title.balance')) ?>" title="<?= e(t('finance.kpi.detail_hint')) ?>">
+        <span class="kpi__label"><?= e(t('statement.title.balance')) ?></span><span class="kpi__value kpi__value--sm"><?= icon('chart-bar-stacked') ?></span>
+        <span class="kpi__hint"><?= e(t('finance.kpi.aging_hint')) ?></span></button>
 </section>
 
 <nav class="status-tabs" data-status-tabs aria-label="<?= e(t('finance.tabs_label')) ?>">

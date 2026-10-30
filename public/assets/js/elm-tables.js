@@ -37,7 +37,7 @@
     };
     const badge = (status, label) => '<span class="badge badge--' + (STATUS_BADGE[status] || 'neutral') + '">' + esc(label) + '</span>';
 
-    /** @param {{t:Function, locale:string, currency:string}} ctx */
+    /** @param {{t:Function, locale:string, currency:string, base?:string}} ctx */
     function definitions(ctx) {
         const t = ctx.t;
         const qty = (v) => core.formatQty(v, ctx.locale);
@@ -114,6 +114,25 @@
                 data: 'status', title: t('common.status'), orderable: true,
                 html: (r) => (Number(r.overdue) ? badge('overdue', t('invoice.status.overdue')) : badge(r.status, t('invoice.status.' + r.status))),
                 text: (r) => t(Number(r.overdue) ? 'invoice.status.overdue' : 'invoice.status.' + r.status),
+            }),
+            // Aperçu en modale (colonne « outil » : toujours affichée, hors exports) : facture client imprimable,
+            // facture fournisseur = dernière pièce jointe (scan PDF / image)
+            preview: (supplier) => ({
+                data: 'preview', title: '', orderable: false, tool: true, className: 'actions-col',
+                html: (r) => {
+                    const base = ctx.base || '';
+                    const title = esc(t('js.preview_invoice', { ref: r.reference }));
+                    if (!supplier) {
+                        return '<a class="icon-btn" href="' + esc(base + '/invoices/' + r.id + '/print') + '" target="_blank" rel="noopener" data-preview data-preview-type="html"'
+                            + ' data-preview-title="' + title + '" title="' + title + '" aria-label="' + title + '"><i data-lucide="eye"></i></a>';
+                    }
+                    if (!r.attachment_id) return '<span class="icon-btn is-disabled" title="' + esc(t('js.no_invoice_file')) + '"><i data-lucide="eye-off"></i></span>';
+                    const href = base + '/attachments/' + r.attachment_id;
+                    const type = r.attachment_mime === 'application/pdf' ? 'pdf' : (String(r.attachment_mime).startsWith('image/') ? 'image' : 'file');
+                    return '<a class="icon-btn" href="' + esc(href) + '" target="_blank" rel="noopener" data-preview data-preview-type="' + type + '"'
+                        + ' data-preview-title="' + title + '" data-preview-download="' + esc(href + '?download=1') + '" title="' + title + '" aria-label="' + title + '"><i data-lucide="eye"></i></a>';
+                },
+                text: () => '',
             }),
             people: (title) => ({
                 data: 'created_by', title, orderable: true, visible: false,
@@ -341,6 +360,7 @@
                 invoiceCol.balance(),
                 invoiceCol.status(),
                 invoiceCol.people(t('js.col.issued_by')),
+                invoiceCol.preview(false),
             ],
 
             // Factures fournisseurs (à payer) : n° de la facture du fournisseur, PO fournisseur
@@ -361,6 +381,7 @@
                 invoiceCol.balance(),
                 invoiceCol.status(),
                 invoiceCol.people(t('js.col.recorded_by')),
+                invoiceCol.preview(true),
             ],
 
             items: [

@@ -54,6 +54,9 @@ final class CockpitDrill
             'deliveries_active' => $this->deliveries($t('deliveries_active'), "d.status IN ('planned','in_transit')"),
             'deliveries_month' => $this->deliveries($t('deliveries_month', ['month' => self::monthLabel($param ?: date('Y-m'))]),
                 "d.status = 'delivered' AND DATE_FORMAT(d.delivered_at, '%Y-%m') = " . Database::pdo()->quote(preg_match('/^\d{4}-\d{2}$/', $param) ? $param : date('Y-m'))),
+            // Factures (indicateurs des pages Factures clients / fournisseurs) : param = « sens:vue »
+            'invoices' => $this->invoices($param),
+            'aging' => $this->aging($param),
             'todo' => $this->todo(),
             'nav' => in_array($param, ['orders', 'purchase_orders', 'licences', 'deliveries', 'receivables', 'payables'], true) ? $this->todo($param) : null,
             'activity' => $this->activity(),
@@ -184,6 +187,98 @@ final class CockpitDrill
     /* ---------- Outils ---------- */
 
     /** @param list<array{0:string,1:string,2?:string}> $cols */
+    /** Vues des indicateurs de factures : condition SQL. */
+    private const INVOICE_VIEWS = [
+        'open' => "i.status = 'open'",
+        'overdue' => "i.status = 'open' AND i.due_date < CURDATE()",
+        'due_soon' => "i.status = 'open' AND i.due_date BETWEEN CURDATE() AND CURDATE() + INTERVAL 7 DAY",
+        'draft' => "i.status = 'draft'",
+    ];
+
+    /** Détail des factures d'un sens (receivable|payable) pour une vue (open, overdue, due_soon, draft). */
+    private function invoices(string $param): ?array
+    {
+        [$dir, $view] = explode(':', $param) + [1 => ''];
+        if (!in_array($dir, ['receivable', 'payable'], true) || !isset(self::INVOICE_VIEWS[$view]) || !$this->user->can('finance.view')) {
+            return null;
+        }
+        $rec = $dir === 'receivable';
+        $paid = '(SELECT COALESCE(SUM(py.amount), 0) FROM payments py WHERE py.invoice_id = i.id)';
+        $rows = $this->rows("SELECT i.id, i.reference, i.external_number, COALESCE(c.name, s.name) AS party, o.reference AS order_ref, o.customer_po_number,
+                dv.reference AS delivery, p.reference AS po, i.invoice_date, i.due_date, i.status, i.currency,
+                COALESCE(i.subtotal, i.amount) AS subtotal, i.vat_amount, i.amount, $paid AS paid, i.amount - $paid AS balance, uc.name AS created_by
+            FROM invoices i JOIN customer_orders o ON o.id = i.order_id JOIN users uc ON uc.id = i.created_by
+            LEFT JOIN customers c ON c.id = i.customer_id LEFT JOIN suppliers s ON s.id = i.supplier_id
+            LEFT JOIN deliveries dv ON dv.id = i.delivery_id LEFT JOIN purchase_orders p ON p.id = i.po_id
+            WHERE i.direction = '$dir' AND " . self::INVOICE_VIEWS[$view] . ' {S} ORDER BY i.due_date, i.id');
+        $today = strtotime('today');
+        foreach ($rows as &$r) {
+            $r['href'] = url('/invoices/' . (int) $r['id']);
+            $late = (int) (($today - strtotime($r['due_date'])) / 86400);
+            $r['late'] = $r['status'] === 'open' && $late > 0 ? $late : null;
+            $r['status'] = t($r['late'] ? 'invoice.status.overdue' : 'invoice.status.' . $r['status']);
+            $r['balance_base'] = $this->base((float) $r['balance'], $r['currency']);
+        }
+        unset($r);
+        $title = t($rec ? 'nav.invoices_customers' : 'nav.invoices_suppliers') . ' — ' . match ($view) {
+            'open' => t('cockpit.drill.invoices_open'),
+            'overdue' => t('cockpit.drill.invoices_overdue'),
+            'due_soon' => t('cockpit.drill.invoices_due_soon'),
+            'draft' => t('cockpit.drill.invoices_draft'),
+        };
+        $cols = $rec
+            ? [['reference', t('orders.col.reference')], ['party', t('orders.col.customer')], ['order_ref', t('invoice.col.order')],
+                ['customer_po_number', t('cockpit.col.customer_po')], ['delivery', t('js.col.shipment')]]
+            : [['external_number', t('js.col.supplier_invoice')], ['reference', t('reference.internal')], ['party', t('cockpit.col.supplier')],
+                ['po', t('cockpit.col.po')], ['order_ref', t('invoice.col.order')]];
+        $cols = [...$cols,
+            ['invoice_date', t('invoice.col.date'), 'date'], ['due_date', t('invoice.col.due'), 'date'], ['late', t('cockpit.col.late_days'), 'number'],
+            ['status', t('common.status')], ['currency', t('cockpit.col.currency')],
+            ...($rec ? [['subtotal', t('js.col.subtotal'), 'money'], ['vat_amount', t('js.col.vat'), 'money']] : []),
+            ['amount', t($rec ? 'js.col.amount_ttc' : 'cockpit.col.amount'), 'money'], ['paid', t($rec ? 'js.col.collected' : 'js.col.paid_out'), 'money'],
+            ['balance', t('invoice.col.balance'), 'money'], ['balance_base', t('cockpit.drill.balance_base'), 'money'],
+            ['created_by', t($rec ? 'js.col.issued_by' : 'js.col.recorded_by')],
+        ];
+        // Facture fournisseur sans n° : la référence interne porte le lien (première colonne)
+        if (!$rec) {
+            foreach ($rows as &$r) {
+                $r['external_number'] = $r['external_number'] ?: $r['reference'];
+            }
+        }
+        return $this->out($title, $cols, $rows);
+    }
+
+    /** Balance âgée de tous les tiers d'un sens, au jour : une ligne par tiers et par devise ; la ligne ouvre le relevé du tiers. */
+    private function aging(string $direction): ?array
+    {
+        if (!in_array($direction, ['receivable', 'payable'], true) || !$this->user->can('finance.view')) {
+            return null;
+        }
+        $today = date('Y-m-d');
+        $rows = [];
+        foreach ((new StatementRepository())->load($direction, null, []) as $id => $d) {
+            foreach ($d['currencies'] as $cur => $x) {
+                $a = \App\Domain\Statement::aging($x['invoices'], $x['payments'], $today);
+                if ($a['total'] <= 0.004) {
+                    continue;
+                }
+                $rows[] = ['party' => $d['party']['name'], 'code' => $d['party']['code'], 'currency' => $cur] + $a['buckets'] + [
+                    'total' => $a['total'], 'overdue' => $a['overdue'], 'pct' => round($a['overdue'] / $a['total'] * 100, 1),
+                    'total_base' => $this->base($a['total'], $cur),
+                    'href' => url('/finance/statements', ['direction' => $direction, 'party_id' => $id, 'type' => 'aging']),
+                ];
+            }
+        }
+        usort($rows, fn ($a, $b) => $b['overdue'] <=> $a['overdue'] ?: $b['total'] <=> $a['total']);
+        return $this->out(t('statement.title.balance') . ' — ' . t($direction === 'receivable' ? 'nav.invoices_customers' : 'nav.invoices_suppliers') . ' · ' . fmt_date($today), [
+            ['party', t($direction === 'receivable' ? 'orders.col.customer' : 'cockpit.col.supplier')], ['code', t('statement.col.code')], ['currency', t('cockpit.col.currency')],
+            ['current', t('statement.bucket.current'), 'money'], ['d30', t('statement.bucket.d30'), 'money'], ['d60', t('statement.bucket.d60'), 'money'],
+            ['d90', t('statement.bucket.d90'), 'money'], ['over90', t('statement.bucket.over90'), 'money'],
+            ['total', t('statement.total_due'), 'money'], ['overdue', t('statement.overdue'), 'money'], ['pct', t('statement.overdue_share'), 'pct'],
+            ['total_base', t('cockpit.drill.balance_base'), 'money'],
+        ], $rows);
+    }
+
     private function out(string $title, array $cols, array $rows): array
     {
         return [

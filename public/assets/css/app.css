@@ -79,6 +79,7 @@ details[open] .nav__chevron { transform: rotate(180deg); }
 .nav__link[aria-current="page"] { background: rgba(255,255,255,.16); color: #fff; font-weight: 500; }
 .nav__link.is-disabled { opacity: .45; cursor: not-allowed; }
 .nav__link.is-disabled:hover { background: none; }
+.icon-btn.is-disabled { opacity: .35; cursor: default; pointer-events: none; }
 
 .main-col { flex: 1; margin-left: var(--sidebar-w); min-width: 0; display: flex; flex-direction: column; transition: margin-left .2s; }
 .topbar { position: sticky; top: 0; z-index: 30; height: 60px; display: flex; align-items: center; gap: var(--space-3); padding: 0 var(--space-5); background: var(--surface); border-bottom: 1px solid var(--border); }
@@ -427,6 +428,11 @@ form.inline { display: inline; }
 .segmented--radio .segmented__item { cursor: pointer; }
 .segmented--radio input { position: absolute; opacity: 0; pointer-events: none; }
 .segmented--radio .segmented__item:has(input:checked) { background: var(--accent); color: #fff; }
+.statement-filters-form .segmented { margin-bottom: var(--space-3); }
+.filters--statement { border-bottom: 0; padding-bottom: 0; }
+.filters--statement .field--check { align-self: center; padding-top: var(--space-5); }
+.statement-view { margin-top: var(--space-4); background: #E9ECF0; border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: auto; }
+.statement-frame { display: block; width: 100%; min-height: 70vh; border: 0; }
 .segmented__item.is-disabled { opacity: .45; cursor: not-allowed; }
 .swal2-popup.swal-form { width: min(640px, 96vw); }
 @media (max-width: 560px) { .field--inline, .form-grid--modal { grid-template-columns: 1fr; } }

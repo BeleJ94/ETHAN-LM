@@ -22,6 +22,7 @@ return [
         ['path' => '/deliveries', 'icon' => 'truck', 'label' => 'nav.deliveries', 'perm' => 'orders.view', 'badge' => 'deliveries'],
         ['path' => '/finance/customers', 'icon' => 'file-up', 'label' => 'nav.invoices_customers', 'perm' => 'finance.view', 'badge' => 'receivables'],
         ['path' => '/finance/suppliers', 'icon' => 'file-down', 'label' => 'nav.invoices_suppliers', 'perm' => 'finance.view', 'badge' => 'payables'],
+        ['path' => '/finance/statements', 'icon' => 'scroll-text', 'label' => 'nav.statements', 'perm' => 'finance.view'],
     ]],
     ['id' => 'stock', 'section' => 'nav.section.stock', 'items' => [
         ['path' => '/items', 'icon' => 'package', 'label' => 'nav.items', 'perm' => 'stock.view'],

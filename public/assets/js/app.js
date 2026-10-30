@@ -441,14 +441,16 @@
         const menu = holder.querySelector('[data-menu]');
         const count = holder.querySelector('[data-columns-count]');
         const render = () => {
-            const visible = table.cols.filter((c, i) => table.dt.column(i).visible()).length;
-            count.textContent = visible + '/' + table.cols.length;
+            const visible = table.cols.filter((c, i) => !c.tool && table.dt.column(i).visible()).length;
+            count.textContent = visible + '/' + table.cols.filter((c) => !c.tool).length;
         };
         menu.innerHTML = '<p class="menu__head">' + core.escapeHtml(t('js.columns_hint')) + '</p>';
         table.cols.forEach((c, i) => {
+            if (c.tool) return;
             const label = document.createElement('label');
             label.className = 'menu__check' + (c.locked ? ' is-locked' : '');
             label.innerHTML = '<input type="checkbox"' + (table.dt.column(i).visible() ? ' checked' : '') + (c.locked ? ' disabled' : '') + '> <span>' + core.escapeHtml(c.title) + '</span>';
+            label.querySelector('input').dataset.col = String(i);
             label.querySelector('input').addEventListener('change', (ev) => {
                 table.dt.column(i).visible(ev.target.checked);
                 const prefs = readColumnPrefs(name) || {};
@@ -465,7 +467,7 @@
         reset.addEventListener('click', () => {
             try { localStorage.removeItem(COLS_KEY(name)); } catch (e) { /* ignore */ }
             table.cols.forEach((c, i) => table.dt.column(i).visible(c.locked || c.visible !== false));
-            menu.querySelectorAll('input').forEach((inp, i) => { inp.checked = table.dt.column(i).visible(); });
+            menu.querySelectorAll('input').forEach((inp) => { inp.checked = table.dt.column(Number(inp.dataset.col)).visible(); });
             render();
         });
         menu.appendChild(reset);
@@ -475,7 +477,7 @@
     }
 
     /* ---------- Tableaux serveur + filtres ---------- */
-    const definitions = window.ELM.tables.definitions({ t, locale: config.locale, currency: config.currency });
+    const definitions = window.ELM.tables.definitions({ t, locale: config.locale, currency: config.currency, base: config.base.replace(/\/$/, '') });
 
     function filterValues(name) {
         const out = {};
@@ -529,6 +531,7 @@
                 info: t('dt.info'), infoEmpty: t('dt.info_empty'), infoFiltered: t('dt.info_filtered'),
                 emptyTable: t('dt.empty'), zeroRecords: t('dt.zero'), processing: t('dt.processing'),
             },
+            drawCallback: refreshIcons, // icônes rendues dans les cellules (ex. aperçu)
             createdRow: (tr, row) => {
                 if (rowLink) {
                     tr.classList.add('row-link');
@@ -626,7 +629,7 @@
         try {
             const params = Object.assign({}, table.dt.ajax.params(), { start: 0, length: -1, draw: 0 });
             // L'export reprend les colonnes affichées (choix de l'utilisateur), dans le même ordre.
-            const exportCols = table.cols.filter((c, i) => table.dt.column(i).visible());
+            const exportCols = table.cols.filter((c, i) => !c.tool && table.dt.column(i).visible());
             const res = await $.getJSON(table.source, params);
             const now = new Date();
             let subtitle = t('js.export_generated', { date: now.toLocaleString(config.locale === 'en' ? 'en-GB' : 'fr-FR') })
@@ -974,6 +977,75 @@
         refreshIcons();
         body.lastElementChild.querySelector('select, input').focus();
     });
+    // Relevés : période prédéfinie → dates « du / au » ; sans tiers choisi = balance âgée (pas de type de relevé)
+    const isoDate = (d) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    $(document).on('change', '[data-period]', function () {
+        const form = this.closest('form');
+        const now = new Date();
+        const y = now.getFullYear();
+        const m = now.getMonth();
+        const q = Math.floor(m / 3) * 3;
+        const ranges = {
+            ytd: [new Date(y, 0, 1), now],
+            this_month: [new Date(y, m, 1), now],
+            last_month: [new Date(y, m - 1, 1), new Date(y, m, 0)],
+            this_quarter: [new Date(y, q, 1), now],
+            last_quarter: [new Date(y, q - 3, 1), new Date(y, q, 0)],
+            last_year: [new Date(y - 1, 0, 1), new Date(y - 1, 11, 31)],
+            last_12: [new Date(y - 1, m, now.getDate() + 1), now],
+        };
+        const r = ranges[this.value];
+        if (!r) return;
+        form.querySelector('[name="from"]').value = isoDate(r[0]);
+        form.querySelector('[name="to"]').value = isoDate(r[1]);
+    });
+    $(document).on('input', '.modal-form [name="from"], .modal-form [name="to"]', function () {
+        const preset = this.form && this.form.querySelector('[data-period]');
+        if (preset) preset.value = 'custom';
+    });
+    /* ---------- Page des relevés : filtres appliqués au changement, document à sa hauteur, export Excel ---------- */
+    const statementForm = document.querySelector('[data-statement-form]');
+    if (statementForm) {
+        const submit = () => statementForm.requestSubmit ? statementForm.requestSubmit() : statementForm.submit();
+        $(statementForm).on('change', '[data-autosubmit]', function () {
+            // Changement de sens : le tiers et le dossier de l'autre sens n'ont plus de sens
+            if (this.hasAttribute('data-reset-party')) {
+                statementForm.querySelectorAll('[name="party_id"], [name="order_id"]').forEach((el) => { el.value = ''; });
+            }
+            if (this.name === 'party_id') {
+                const order = statementForm.querySelector('[name="order_id"]');
+                if (order) order.value = '';
+            }
+            submit();
+        });
+        $(statementForm).on('change', '[data-period]', function () { if (this.value !== 'custom') submit(); });
+        $(statementForm).on('change', 'input[type="date"]', submit);
+    }
+    document.querySelectorAll('iframe[data-autoheight]').forEach((frame) => {
+        const fit = () => {
+            try { frame.style.height = (frame.contentDocument.documentElement.scrollHeight + 4) + 'px'; } catch (e) { /* autre origine */ }
+        };
+        frame.addEventListener('load', () => { fit(); setTimeout(fit, 300); });
+        window.addEventListener('resize', fit);
+    });
+    $(document).on('click', '[data-statement-excel]', async function () {
+        const btn = this;
+        btn.disabled = true;
+        try {
+            const data = await $.getJSON(btn.dataset.statementExcel);
+            const now = new Date();
+            await window.ELM.export.report(Object.assign({}, data, {
+                vendor, accent,
+                generated: t('js.export_generated', { date: now.toLocaleString(config.locale === 'en' ? 'en-GB' : 'fr-FR') }),
+                totalLabel: t('js.export_total'),
+            }));
+        } catch (e) {
+            Swal.fire({ icon: 'error', text: t('js.error'), customClass: { popup: 'swal-sober' } });
+        } finally {
+            btn.disabled = false;
+        }
+    });
+
     // Aperçu d'un document avant enregistrement : le formulaire est envoyé tel quel vers l'adresse d'aperçu, dans un nouvel onglet.
     $(document).on('click', '[data-form-preview]', function () {
         const form = this.closest('form');

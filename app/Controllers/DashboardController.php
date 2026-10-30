@@ -36,7 +36,8 @@ final class DashboardController extends Controller
     public function drill(Request $request): Response
     {
         // Le détail des pastilles du menu est visible de tout utilisateur qui voit ces rubriques.
-        $this->authorize($request->query('key') === 'nav' ? 'orders.view' : 'dashboard.view');
+        $key = (string) $request->query('key');
+        $this->authorize(match ($key) { 'nav' => 'orders.view', 'invoices', 'aging' => 'finance.view', default => 'dashboard.view' });
         $data = (new CockpitDrill($this->user()))->get((string) $request->query('key', ''), (string) $request->query('param', ''));
         return $data === null ? Response::json(['error' => 'not_found'], 404) : Response::json($data);
     }
